@@ -1,10 +1,12 @@
 {
-  "name": "h5_vue3_ts",
+  "name": "afanti-project",
   "private": true,
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
+    "build:dev": "vue-tsc --noEmit && vite build --mode dev",
+    "build:rel": "vue-tsc --noEmit && vite build --mode release",
+    "build:pro": "vue-tsc --noEmit && vite build --mode production",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx --fix",
     "prepare": "husky install",
