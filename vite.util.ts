@@ -7,8 +7,6 @@ interface IExternalConfig {
   css?: string[];
 }
 
-console.log(import.meta);
-
 /**
  * 需要使用cdn的库
  * 当前使用的是 BootCDN

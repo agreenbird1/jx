@@ -94,6 +94,7 @@ export default defineConfig({
       external: externalConfig.map((c) => c.name),
       plugins: [externalGlobals(getExternalConfigGlobals())],
     },
+    minify: "terser",
     terserOptions: {
       compress: {
         //生产环境时移除console
