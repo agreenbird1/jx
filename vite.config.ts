@@ -1,10 +1,12 @@
 import { defineConfig } from "vite";
+import legacy from "@vitejs/plugin-legacy";
 import vue from "@vitejs/plugin-vue";
 import { fileURLToPath, URL } from "url";
 import { normalizePath } from "vite";
 import { createHtmlPlugin } from "vite-plugin-html";
 import autoprefixer from "autoprefixer";
 import viteCompression from "vite-plugin-compression";
+import viteImagemin from "vite-plugin-imagemin";
 import externalGlobals from "rollup-plugin-external-globals";
 import {
   externalConfig,
@@ -35,6 +37,41 @@ export default defineConfig({
       inject: {
         data: externalInject(),
       },
+    }),
+    // 图片压缩
+    viteImagemin({
+      // 无损压缩配置，无损压缩下图片质量不会变差
+      optipng: {
+        optimizationLevel: 7,
+      },
+      // 有损压缩配置，有损压缩下图片质量可能会变差
+      pngquant: {
+        quality: [0.8, 0.9],
+      },
+      // svg 优化
+      svgo: {
+        plugins: [
+          {
+            name: "removeViewBox",
+          },
+          {
+            name: "removeEmptyAttrs",
+            active: false,
+          },
+        ],
+      },
+    }),
+    // 浏览器兼容
+    legacy({
+      targets: [
+        "> 2%",
+        "last 2 versions",
+        "Firefox >= 50",
+        "Chrome >= 60",
+        "not ie <= 11",
+        "Android 4.1",
+        "iOS 7.1",
+      ],
     }),
   ],
   resolve: {
