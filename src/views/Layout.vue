@@ -1,5 +1,5 @@
 <template>
-  <div class="layout">layout dev</div>
+  <div class="layout">layout dev ci test</div>
 </template>
 
 <script setup lang="ts"></script>
