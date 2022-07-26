@@ -1,12 +1,47 @@
 <template>
-  <div class="layout">layout dev ci test</div>
+  <div class="layout">
+    <my-header />
+    <div class="main">
+      <router-view></router-view>
+    </div>
+  </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import MyHeader from "../components/MyHeader.vue";
+</script>
 
 <style scoped lang="less">
 .layout {
-  color: @textColor;
-  font-size: 100px;
+  background-color: @bgColor;
+  width: 100%;
+  header {
+    width: 100%;
+    background-color: #fff;
+    .header-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 1200px;
+      height: 72px;
+      margin: 0 auto;
+      img {
+        height: 45px;
+      }
+      .left {
+        display: flex;
+        .search-bar {
+          height: 40px;
+          width: 343px;
+          margin-left: 53px;
+          border: 1px solid #a7b0bd;
+          border-radius: 5px;
+        }
+      }
+    }
+  }
+  .main {
+    width: 1200px;
+  }
 }
 </style>
