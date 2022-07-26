@@ -4,8 +4,6 @@ import vue from "@vitejs/plugin-vue";
 import { fileURLToPath, URL } from "url";
 import { normalizePath } from "vite";
 import { createHtmlPlugin } from "vite-plugin-html";
-import Components from "unplugin-vue-components/vite";
-import { AntDesignVueResolver } from "unplugin-vue-components/resolvers";
 import autoprefixer from "autoprefixer";
 import viteCompression from "vite-plugin-compression";
 import viteImagemin from "vite-plugin-imagemin";
@@ -29,9 +27,6 @@ export default defineConfig(({ mode, command }) => {
     base: "./",
     plugins: [
       vue(),
-      Components({
-        resolvers: [AntDesignVueResolver()],
-      }),
       // gzip
       viteCompression({
         verbose: true,

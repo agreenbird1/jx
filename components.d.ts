@@ -7,11 +7,6 @@ export {};
 
 declare module "@vue/runtime-core" {
   export interface GlobalComponents {
-    AAvatar: typeof import("ant-design-vue/es")["Avatar"];
-    ADropdown: typeof import("ant-design-vue/es")["Dropdown"];
-    AInput: typeof import("ant-design-vue/es")["Input"];
-    AMenu: typeof import("ant-design-vue/es")["Menu"];
-    AMenuItem: typeof import("ant-design-vue/es")["MenuItem"];
     MyHeader: typeof import("./src/components/MyHeader.vue")["default"];
     RouterLink: typeof import("vue-router")["RouterLink"];
     RouterView: typeof import("vue-router")["RouterView"];
