@@ -13,6 +13,8 @@
     "commit": "git-cz"
   },
   "dependencies": {
+    "@ant-design/icons-vue": "^6.1.0",
+    "ant-design-vue": "^3.2.10",
     "axios": "^0.27.2",
     "pinia": "^2.0.14",
     "vue": "^3.2.25",
@@ -40,6 +42,7 @@
     "prettier": "^2.7.1",
     "rollup-plugin-external-globals": "^0.6.1",
     "typescript": "^4.5.4",
+    "unplugin-vue-components": "^0.21.2",
     "vite": "^2.9.9",
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-html": "^3.2.0",
