@@ -1,7 +1,15 @@
 import type { App } from "vue";
-import { Input, Dropdown, Menu, MenuItem, Avatar } from "ant-design-vue";
+import {
+  Input,
+  Dropdown,
+  Menu,
+  MenuItem,
+  Avatar,
+  Tabs,
+  TabPane,
+} from "ant-design-vue";
 
-const components = [Input, Dropdown, Menu, MenuItem, Avatar];
+const components = [Input, Dropdown, Menu, MenuItem, Avatar, Tabs, TabPane];
 
 export default {
   install(app: App) {

@@ -15,6 +15,7 @@ import MyHeader from "../components/MyHeader.vue";
 .layout {
   background-color: @bgColor;
   width: 100%;
+  padding-bottom: 100px;
   header {
     width: 100%;
     background-color: #fff;
@@ -42,6 +43,7 @@ import MyHeader from "../components/MyHeader.vue";
   }
   .main {
     width: 1200px;
+    margin: 0 auto;
   }
 }
 </style>
