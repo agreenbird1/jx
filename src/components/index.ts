@@ -1,4 +1,5 @@
 import type { App } from "vue";
+import RecordItem from "./RecordItem.vue";
 import {
   Input,
   Dropdown,
@@ -7,9 +8,29 @@ import {
   Avatar,
   Tabs,
   TabPane,
+  Modal,
+  Form,
+  FormItem,
+  Button,
+  Checkbox,
 } from "ant-design-vue";
 
-const components = [Input, Dropdown, Menu, MenuItem, Avatar, Tabs, TabPane];
+RecordItem.name = "record-item";
+const components = [
+  Input,
+  Dropdown,
+  Menu,
+  MenuItem,
+  Avatar,
+  Tabs,
+  TabPane,
+  RecordItem,
+  Modal,
+  Form,
+  FormItem,
+  Button,
+  Checkbox,
+];
 
 export default {
   install(app: App) {
