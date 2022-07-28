@@ -18,6 +18,11 @@ const router = createRouter({
           name: "record",
           component: () => import("@/views/record/index.vue"),
         },
+        {
+          path: "/search",
+          name: "search",
+          component: () => import("@/views/search/index.vue"),
+        },
       ],
     },
   ],
