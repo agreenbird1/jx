@@ -1,5 +1,6 @@
 import type { App } from "vue";
 import RecordItem from "./RecordItem.vue";
+import MainHeader from "./MainHeader.vue";
 import {
   Input,
   Dropdown,
@@ -16,6 +17,7 @@ import {
 } from "ant-design-vue";
 
 RecordItem.name = "record-item";
+MainHeader.name = "main-header";
 const components = [
   Input,
   Dropdown,
@@ -30,6 +32,7 @@ const components = [
   FormItem,
   Button,
   Checkbox,
+  MainHeader,
 ];
 
 export default {
