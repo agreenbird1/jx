@@ -1,11 +1,6 @@
 <template>
   <div class="record mt-20">
-    <div class="record-title pt-20 pb-20 flex-bt">
-      <span>做题记录</span>
-      <router-link to="/">
-        <span>&nbsp;返回题库&nbsp;</span>
-      </router-link>
-    </div>
+    <main-header title="做题记录"></main-header>
     <DateRecord />
     <DateRecord />
     <DateRecord />
@@ -22,14 +17,5 @@ import DateRecord from "./components/DateRecord.vue";
   border-radius: 5px;
   padding: 20px;
   min-height: 500px;
-  .record-title {
-    & span:last-child {
-      font-size: 12px;
-      color: @jxColor;
-      border: 1px solid @jxColor;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-  }
 }
 </style>

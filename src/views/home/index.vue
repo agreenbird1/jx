@@ -4,12 +4,12 @@
       <div class="title pt-20">客观题</div>
       <a-tabs v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="刑法">
-          <div class="random">
+          <div class="random flex-bt">
             <span>随机出题</span>
             <right-outlined />
           </div>
           <div class="chapters">
-            <div v-for="i in 40" :key="i" class="chapter mt-20 mr-20">
+            <div v-for="i in 40" :key="i" class="chapter mt-20 mr-20 flex-bt">
               <span>刑法的解释</span>
               <span>0/4</span>
             </div>
@@ -23,52 +23,43 @@
     </div>
     <aside class="ml-20">
       <div class="record br-5">
-        <div class="title">
+        <div class="title flex-bt">
           <span>做题记录</span>
-          <span>查看全部 <right-outlined /> </span>
+          <router-link to="/record">
+            <span>查看全部 <right-outlined /> </span>
+          </router-link>
         </div>
-        <div class="record-item br-5 ml-20 mb-20">
-          <div class="chapter">
-            <span>chapter name</span>
-            <span>得分: 0/10 &nbsp;&nbsp;&nbsp;&nbsp; 做题数: 0/10</span>
-          </div>
-          <div class="view br-5">查看</div>
-        </div>
-        <div class="record-item br-5 ml-20 mb-20">
-          <div class="chapter">
-            <span>chapter name</span>
-            <span>得分: 0/10 &nbsp;&nbsp;&nbsp;&nbsp; 做题数: 0/10</span>
-          </div>
-          <div class="view br-5">查看</div>
-        </div>
-        <div class="record-item br-5 ml-20 mb-20">
-          <div class="chapter">
-            <span>chapter name</span>
-            <span>得分: 0/10 &nbsp;&nbsp;&nbsp;&nbsp; 做题数: 0/10</span>
-          </div>
-          <div class="view br-5">查看</div>
-        </div>
-        <div class="record-item br-5 ml-20 mb-20">
-          <div class="chapter">
-            <span>chapter name</span>
-            <span>得分: 0/10 &nbsp;&nbsp;&nbsp;&nbsp; 做题数: 0/10</span>
-          </div>
-          <div class="view br-5">查看</div>
-        </div>
+        <record-item
+          v-for="i in 4"
+          :key="i"
+          :total-scores="10"
+          :scores="2"
+          :total-questions="10"
+          :questions="2"
+          course-name="刑法"
+          chapter-name="刑法的解释"
+          class="ml-20 mb-20"
+        ></record-item>
       </div>
       <div class="rank br-5 mt-20">
         <div class="title mb-20">做题排名</div>
-        <div v-for="(stu, idx) in rankList" :key="idx" class="rank-item mb-20">
+        <div v-for="idx in 50" :key="idx" class="rank-item flex-bt mb-20">
           <div class="student">
-            <template v-if="idx < 3">
-              <img :src="`../../../src/assets/icons/rank${idx + 1}.png`" />
+            <template v-if="idx === 3">
+              <img src="../../assets/icons/rank3.png" />
+            </template>
+            <template v-else-if="idx === 2">
+              <img src="../../assets/icons/rank2.png" />
+            </template>
+            <template v-else-if="idx === 1">
+              <img src="../../assets/icons/rank1.png" />
             </template>
             <template v-else>
-              <span>{{ idx + 1 }}</span>
+              <span>{{ idx }}</span>
             </template>
-            <span>{{ stu.name }}</span>
+            <span>觉晓学员</span>
           </div>
-          <span>{{ stu.scores }}</span>
+          <span>1000</span>
         </div>
         <div class="rank-end">- 排名仅展示前50名 -</div>
       </div>
@@ -81,76 +72,6 @@ import { ref } from "vue";
 import { RightOutlined } from "@ant-design/icons-vue";
 
 const activeKey = ref("1");
-const rankList = ref([
-  {
-    name: "觉晓学员",
-    scores: 1000,
-  },
-  {
-    name: "觉晓学员",
-    scores: 1000,
-  },
-  {
-    name: "觉晓学员",
-    scores: 1000,
-  },
-  {
-    name: "觉晓学员",
-    scores: 1000,
-  },
-  {
-    name: "觉晓学员",
-    scores: 1000,
-  },
-  {
-    name: "觉晓学员",
-    scores: 1000,
-  },
-  {
-    name: "觉晓学员",
-    scores: 1000,
-  },
-  {
-    name: "觉晓学员",
-    scores: 1000,
-  },
-  {
-    name: "觉晓学员",
-    scores: 1000,
-  },
-  {
-    name: "觉晓学员",
-    scores: 1000,
-  },
-  {
-    name: "觉晓学员",
-    scores: 1000,
-  },
-  {
-    name: "觉晓学员",
-    scores: 1000,
-  },
-  {
-    name: "觉晓学员",
-    scores: 1000,
-  },
-  {
-    name: "觉晓学员",
-    scores: 1000,
-  },
-  {
-    name: "觉晓学员",
-    scores: 1000,
-  },
-  {
-    name: "觉晓学员",
-    scores: 1000,
-  },
-  {
-    name: "觉晓学员",
-    scores: 1000,
-  },
-]);
 </script>
 
 <style scoped lang="less">
@@ -168,9 +89,6 @@ const rankList = ref([
     .random,
     .chapter {
       .hoverShadow();
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
       padding: 0 20px 0 18px;
       width: 240px;
       height: 44px;
@@ -201,12 +119,6 @@ const rankList = ref([
     .record {
       background-color: #fff;
       height: 392px;
-      .title,
-      .record-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
       .title {
         padding: 19px 20px 19px 20px;
         height: 62px;
@@ -216,32 +128,6 @@ const rankList = ref([
           cursor: pointer;
         }
       }
-      .record-item {
-        .hoverShadow();
-        padding: 12px;
-        width: 340px;
-        height: 62px;
-        border: 1px solid @bgColor;
-        .chapter {
-          span {
-            display: block;
-          }
-          & span:last-child {
-            font-size: 12px;
-            color: @assistTextColor;
-          }
-        }
-        .view {
-          width: 44px;
-          height: 20px;
-          font-size: 11px;
-          background-color: #d9e4ff;
-          text-align: center;
-          line-height: 20px;
-          cursor: pointer;
-          color: @jxColor;
-        }
-      }
     }
     .rank {
       height: 557px;
@@ -249,9 +135,6 @@ const rankList = ref([
       background-color: #fff;
       overflow-y: auto;
       .rank-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
         height: 24px;
         .student {
           img {
