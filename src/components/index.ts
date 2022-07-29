@@ -14,6 +14,8 @@ import {
   FormItem,
   Button,
   Checkbox,
+  Radio,
+  RadioGroup,
 } from "ant-design-vue";
 
 RecordItem.name = "record-item";
@@ -33,6 +35,8 @@ const components = [
   Button,
   Checkbox,
   MainHeader,
+  Radio,
+  RadioGroup,
 ];
 
 export default {
