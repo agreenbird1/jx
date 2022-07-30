@@ -20,12 +20,12 @@
       </div>
       <div class="user">
         <template v-if="userStore.nickname">
-          <img src="../assets/icons/avatar.png" />
+          <img :src="userStore.avatar" />
           <a-dropdown>
-            <a @click.prevent> 觉晓学员 </a>
+            <a @click.prevent> {{ userStore.nickname }} </a>
             <template #overlay>
               <a-menu>
-                <a-menu-item>
+                <a-menu-item @click="logout">
                   <a href="javascript:;">退出登录</a>
                 </a-menu-item>
               </a-menu>
@@ -44,7 +44,6 @@
       :footer="null"
       :closable="false"
       width="460px"
-      @ok="handleOk"
     >
       <div style="padding: 0 40px">
         <div style="font-size: 24px; margin-bottom: 37px">
@@ -149,10 +148,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onBeforeUpdate, ref } from "vue";
+import { computed, onBeforeUnmount, ref } from "vue";
 import { SearchOutlined } from "@ant-design/icons-vue";
+import { message } from "ant-design-vue";
 import type { Rule } from "ant-design-vue/es/form";
 import { useUserStore } from "@/store/user";
+import { sendCode, loginByCode as loginByCodeApi } from "@/api";
+import storage from "@/utils/storage";
 
 const searchWords = ref(""); // 搜索框内容
 let Countdown = ref(60);
@@ -167,10 +169,6 @@ const loginForm = ref({
   code: "",
   isAgree: false,
 });
-const handleOk = () => {
-  console.log("handleOk");
-  isLogin.value = false;
-};
 const agreeValidator = (_rule: Rule, value: boolean) => {
   if (!value) return Promise.reject("请勾选用户协议!");
   return Promise.resolve();
@@ -199,8 +197,20 @@ const phoneRules: Rule[] = [
     trigger: ["change", "blur"],
   },
 ];
-const loginByCode = () => {
-  console.log("loginByCode");
+const loginByCode = async () => {
+  const { data } = await loginByCodeApi(
+    loginForm.value.phone,
+    loginForm.value.code
+  );
+  if (data.code >= 2000 && data.code < 3000) {
+    userStore.$patch(data.data);
+    storage.setStorage("user", data.data);
+    isLogin.value = false;
+    loginForm.value = { phone: "", code: "", isAgree: false };
+    message.success("登陆成功！");
+  } else {
+    message.error("验证码错误！");
+  }
 };
 // 三种状态
 // 1. 为填手机号
@@ -218,7 +228,7 @@ const codeStyle = computed(() => {
     color: "#4379ff",
   };
 });
-const getCode = () => {
+const getCode = async () => {
   // 验证通过才可以发送请求
   if (phoneReg.test(loginForm.value.phone) && !isSendCode.value) {
     isSendCode.value = true;
@@ -230,8 +240,17 @@ const getCode = () => {
         isSendCode.value = false;
       }
     }, 1000);
+    await sendCode(loginForm.value.phone);
+    message.success("验证码已发送，请注意查收！");
   }
 };
+
+const logout = () => {
+  userStore.$patch({});
+  storage.deleteStorage("user");
+  message.success("退出成功！");
+};
+// 清除可能遗漏的定时器
 onBeforeUnmount(() => clearInterval(timer as NodeJS.Timer));
 </script>
 

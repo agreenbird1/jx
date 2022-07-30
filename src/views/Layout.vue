@@ -1,6 +1,6 @@
 <template>
   <div class="layout">
-    <my-header />
+    <home-header />
     <div class="main">
       <router-view></router-view>
     </div>
@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import MyHeader from "../components/MyHeader.vue";
+import HomeHeader from "../components/HomeHeader.vue";
 </script>
 
 <style scoped lang="less">
