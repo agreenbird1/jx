@@ -10,14 +10,22 @@ export type requestType = <T = any>(
   method: Method,
   data?: unknown,
   config?: AFanTiAxiosRequestConfig // 配置其他，包括 isLoading
-) => AxiosPromise<T>;
+) => AxiosPromise<{
+  code: number;
+  data: T;
+  msg: string;
+}>;
 
 // 单独方法的声明
 export type requestMethodType = <T = any>(
   url: string,
   data?: unknown,
   config?: AFanTiAxiosRequestConfig // 配置其他，包括 isLoading
-) => AxiosPromise<T>;
+) => AxiosPromise<{
+  code: number;
+  data: T;
+  msg: string;
+}>;
 
 // 直接生成每一个对应的简单的方法
 export type requestMethod = {
