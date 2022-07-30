@@ -1,65 +1,93 @@
 <template>
   <div class="home mt-20">
+    <!-- 添加骨架组件加载动画！ -->
     <div class="home-subjects">
-      <div class="title pt-20">客观题</div>
-      <a-tabs v-model:activeKey="activeKey">
-        <a-tab-pane key="1" tab="刑法">
-          <div class="random flex-bt">
-            <span>随机出题</span>
-            <right-outlined />
-          </div>
-          <div class="chapters">
-            <div v-for="i in 40" :key="i" class="chapter mt-20 mr-20 flex-bt">
-              <span>刑法的解释</span>
-              <span>0/4</span>
+      <template v-if="objectiveSubject">
+        <div class="title pt-20">{{ objectiveSubject?.content }}</div>
+        <a-tabs animated centered>
+          <a-tab-pane
+            v-for="course in objectiveSubject?.children"
+            :key="course.id"
+            :tab="course.content"
+          >
+            <div class="random flex-bt">
+              <span>随机出题</span>
+              <right-outlined />
             </div>
-          </div>
-        </a-tab-pane>
-        <a-tab-pane key="2" tab="民法" force-render
-          >Content of Tab Pane 2</a-tab-pane
-        >
-        <a-tab-pane key="3" tab="诉讼法">Content of Tab Pane 3</a-tab-pane>
-      </a-tabs>
+            <div class="chapters">
+              <div
+                v-for="chapter in course.children"
+                :key="chapter.id"
+                class="chapter mt-20 mr-20 flex-bt"
+              >
+                <span>{{ chapter.content }}</span>
+                <span
+                  >{{ chapter.doOtopicNum }}/{{ chapter.otopicNumber }}</span
+                >
+              </div>
+            </div>
+          </a-tab-pane>
+        </a-tabs>
+      </template>
+      <template v-else>
+        <home-skeleton />
+      </template>
     </div>
     <aside class="ml-20">
       <div class="record br-5">
-        <div class="title flex-bt">
-          <span>做题记录</span>
-          <router-link to="/record">
-            <span>查看全部 <right-outlined /> </span>
-          </router-link>
-        </div>
-        <record-item
-          v-for="i in 4"
-          :key="i"
-          :total-scores="10"
-          :scores="2"
-          :total-questions="10"
-          :questions="2"
-          course-name="刑法"
-          chapter-name="刑法的解释"
-          class="ml-20 mb-20"
-        ></record-item>
+        <template v-if="!records?.length">
+          <div class="title flex-bt">
+            <span>做题记录</span>
+            <router-link to="/record">
+              <span>查看全部 <right-outlined /> </span>
+            </router-link>
+          </div>
+          <record-item
+            v-for="record in records"
+            :key="record.id"
+            :total-scores="record.totalScore"
+            :scores="record.getScore"
+            :total-questions="record.totalOtopic"
+            :questions="record.doOtopicNum"
+            :course-name="record.secondChapterContent"
+            :chapter-name="record.content"
+            class="ml-20 mb-20"
+          ></record-item>
+        </template>
+        <template v-else>
+          <div class="empty">
+            <img src="@/assets/icons/empty.png" alt="" />
+            <span
+              >{{ userStore.id ? "暂时没有做题记录哦！" : "请登录后查看" }}
+            </span>
+          </div>
+        </template>
       </div>
       <div class="rank br-5 mt-20">
-        <div class="title mb-20">做题排名</div>
-        <div v-for="idx in 50" :key="idx" class="rank-item flex-bt mb-20">
-          <div class="student">
-            <template v-if="idx === 3">
-              <img src="../../assets/icons/rank3.png" />
-            </template>
-            <template v-else-if="idx === 2">
-              <img src="../../assets/icons/rank2.png" />
-            </template>
-            <template v-else-if="idx === 1">
-              <img src="../../assets/icons/rank1.png" />
-            </template>
-            <template v-else>
-              <span>{{ idx }}</span>
-            </template>
-            <span>觉晓学员</span>
+        <div class="title mb-20 pl-20">做题排名</div>
+        <div class="rank-list">
+          <div
+            v-for="rankItem in rankList"
+            :key="rankItem.nickname"
+            class="rank-item flex-bt mb-20"
+          >
+            <div class="student">
+              <template v-if="rankItem.rank === 3">
+                <img src="@/assets/icons/rank3.png" />
+              </template>
+              <template v-else-if="rankItem.rank === 2">
+                <img src="@/assets/icons/rank2.png" />
+              </template>
+              <template v-else-if="rankItem.rank === 1">
+                <img src="@/assets/icons/rank1.png" />
+              </template>
+              <template v-else>
+                <span>{{ rankItem.rank }}</span>
+              </template>
+              <span>{{ rankItem.nickname }}</span>
+            </div>
+            <span>{{ rankItem.doQuestionNum }}</span>
           </div>
-          <span>1000</span>
         </div>
         <div class="rank-end">- 排名仅展示前50名 -</div>
       </div>
@@ -70,8 +98,30 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { RightOutlined } from "@ant-design/icons-vue";
+import {
+  getAllSubjects,
+  IChapter,
+  getRecords,
+  IRecord,
+  getRankList,
+  IRankItem,
+} from "@/api";
+import HomeSkeleton from "./components/HomeSkeleton.vue";
+import { useUserStore } from "@/store/user";
 
-const activeKey = ref("1");
+const userStore = useUserStore();
+const records = ref<IRecord[]>();
+const objectiveSubject = ref<IChapter>();
+const rankList = ref<IRankItem[]>();
+getAllSubjects().then((res) => {
+  objectiveSubject.value = res.data.data[0];
+});
+getRecords().then((res) => {
+  records.value = res.data.data;
+});
+getRankList().then((res) => {
+  rankList.value = res.data.data;
+});
 </script>
 
 <style scoped lang="less">
@@ -130,22 +180,28 @@ const activeKey = ref("1");
       }
     }
     .rank {
+      display: flex;
+      flex-direction: column;
       height: 557px;
-      padding: 11px 20px 20px 20px;
+      padding: 11px 0 20px 0;
       background-color: #fff;
-      overflow-y: auto;
-      .rank-item {
-        height: 24px;
-        .student {
-          img {
-            margin-right: 20px;
-          }
-          & span:first-child {
-            display: inline-block;
-            width: 24px;
-            text-align: center;
-            color: @assistTextColor;
-            margin-right: 20px;
+      .rank-list {
+        flex: 1;
+        padding: 0 20px;
+        overflow-y: auto;
+        .rank-item {
+          height: 24px;
+          .student {
+            img {
+              margin-right: 20px;
+            }
+            & span:first-child {
+              display: inline-block;
+              width: 24px;
+              text-align: center;
+              color: @assistTextColor;
+              margin-right: 20px;
+            }
           }
         }
       }
@@ -153,6 +209,18 @@ const activeKey = ref("1");
         text-align: center;
         font-size: 12px;
         color: @assistTextColor;
+      }
+    }
+    .empty {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: @assistTextColor;
+      font-size: 14px;
+      img {
+        margin-bottom: 10px;
       }
     }
   }
