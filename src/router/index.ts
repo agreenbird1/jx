@@ -25,6 +25,11 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: "/doOTopic",
+      name: "doOTopic",
+      component: () => import("@/views/doOTopic/index.vue"),
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) return savedPosition;
