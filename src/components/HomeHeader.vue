@@ -73,7 +73,7 @@
             name="basic"
             destroy-on-close
             autocomplete="off"
-            @submit="loginByCode"
+            @finish="loginByCode"
           >
             <a-form-item name="phone" :rules="phoneRules">
               <a-input
@@ -197,6 +197,7 @@ const phoneRules: Rule[] = [
     trigger: ["change", "blur"],
   },
 ];
+// 使用 finish 事件：需要验证通过才回调
 const loginByCode = async () => {
   const { data } = await loginByCodeApi(
     loginForm.value.phone,
@@ -246,7 +247,13 @@ const getCode = async () => {
 };
 
 const logout = () => {
-  userStore.$patch({});
+  // 传递空键值对
+  // 如果使用 {} 是合并
+  userStore.$patch({
+    id: 0,
+    nickname: "",
+    avatar: "",
+  });
   storage.deleteStorage("user");
   message.success("退出成功！");
 };
