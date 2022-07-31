@@ -37,7 +37,7 @@
           :key="title.name"
           class="titles"
         >
-          <div class="titles-type">一、{{ title.name }}</div>
+          <div class="titles-type">{{ title.name }}</div>
           <div class="titles-idx">
             <div
               v-for="i in title.count"
@@ -170,17 +170,17 @@ const marks = ref<boolean[]>(); // 标记信息
 const subjectTypeNumber = ref([
   {
     count: 0,
-    name: "单选题",
+    name: "一、单选题",
     start: 0,
   },
   {
     count: 0,
-    name: "多选题",
+    name: "二、多选题",
     start: 0,
   },
   {
     count: 0,
-    name: "不定项",
+    name: "三、不定项",
     start: 0,
   },
 ]);
