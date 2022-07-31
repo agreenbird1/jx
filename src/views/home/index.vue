@@ -19,11 +19,14 @@
                 v-for="chapter in course.children"
                 :key="chapter.id"
                 class="chapter mt-20 mr-20 flex-bt"
+                @click="
+                  $router.push(
+                    `/doOTopic?course=${course.content}&chapterId=${chapter.id}`
+                  )
+                "
               >
                 <span>{{ chapter.content }}</span>
-                <span
-                  >{{ chapter.doOtopicNum }}/{{ chapter.otopicNumber }}</span
-                >
+                <span>{{ chapter.doOtopicNum }}/{{ chapter.otopicNum }}</span>
               </div>
             </div>
           </a-tab-pane>
@@ -35,7 +38,7 @@
     </div>
     <aside class="ml-20">
       <div class="record br-5">
-        <template v-if="!records?.length">
+        <template v-if="records?.length">
           <div class="title flex-bt">
             <span>做题记录</span>
             <router-link to="/record">
@@ -116,7 +119,7 @@ const rankList = ref<IRankItem[]>();
 getAllSubjects().then((res) => {
   objectiveSubject.value = res.data.data[0];
 });
-getRecords().then((res) => {
+getRecords(false).then((res) => {
   records.value = res.data.data;
 });
 getRankList().then((res) => {
