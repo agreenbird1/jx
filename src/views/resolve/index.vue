@@ -12,7 +12,7 @@
           <p class="subject-title mb-20">
             1、甲为勒索财物，打算绑架富商之子吴某（5岁）。甲欺骗乙、丙说："富商欠我100万元不还，你们帮我扣押其子，成功后给你们每人10万元。"乙、丙将吴某扣押，但甲无法联系上富商，未能进行勒索。三天后，甲让乙、丙将吴某释放。吴某一人在回家路上溺水身亡。关于本案，下列哪一项选项是正确的？
           </p>
-          <a-radio-group v-model:value="value">
+          <!-- <a-radio-group v-model:value="value">
             <a-radio :style="radioStyle" :value="1"
               >Option AOption AOption AOption AOption AOption AOption AOption
               AOption AOption AOption AOption AOptionOption AOption AOption
@@ -24,41 +24,7 @@
             <a-radio :style="radioStyle" :value="2">Option B</a-radio>
             <a-radio :style="radioStyle" :value="3">Option C</a-radio>
             <a-radio :style="radioStyle" :value="4"> Option D </a-radio>
-          </a-radio-group>
-          <div class="resolve-detail-wrapper">
-            <div class="correct mb-20 mt-20">
-              正确答案：C &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 您的答案：C
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
-                style="color: #131936"
-                >全站正确率：39%</span
-              >
-            </div>
-            <p>文字解析</p>
-            <div class="resolve-detail">
-              根据《刑法》第117条规定：“破坏轨道、桥梁、隧道、公路、机场、航道、灯塔、标志或者进行其他破坏活动，足以使火车、汽车、电车、船只、航空器发生倾覆、毁坏危险，尚未造成严重后果的，处三年以上十年以下有期徒刑。”
-              <br />
-              AD项：本罪是危险犯，客体是交通运输安全，陈某破坏轨道的行为足以导致火车发生倾覆、毁坏的危险，所以构成破坏交通设施罪，因及时发现，未造成火车倾覆、毁坏的事故，不构成本罪的结果加重犯。因此，AD项错误。<br />
-              BC项：陈某只是欲制造火车出轨事故，故意范围中并不包括
-            </div>
-          </div>
-        </div>
-        <div class="subject">
-          <p class="subject-title mb-20">
-            1、甲为勒索财物，打算绑架富商之子吴某（5岁）。甲欺骗乙、丙说："富商欠我100万元不还，你们帮我扣押其子，成功后给你们每人10万元。"乙、丙将吴某扣押，但甲无法联系上富商，未能进行勒索。三天后，甲让乙、丙将吴某释放。吴某一人在回家路上溺水身亡。关于本案，下列哪一项选项是正确的？
-          </p>
-          <a-radio-group v-model:value="value">
-            <a-radio :style="radioStyle" :value="1"
-              >Option AOption AOption AOption AOption AOption AOption AOption
-              AOption AOption AOption AOption AOptionOption AOption AOption
-              AOption AOption AOption AOption AOption AOption AOption AOption
-              AOption AOpOption AOption AOption AOption AOption AOption AOption
-              AOption AOption AOption AOption AOption AOption AOption Ation
-              AOption A AOption A</a-radio
-            >
-            <a-radio :style="radioStyle" :value="2">Option B</a-radio>
-            <a-radio :style="radioStyle" :value="3">Option C</a-radio>
-            <a-radio :style="radioStyle" :value="4"> Option D </a-radio>
-          </a-radio-group>
+          </a-radio-group> -->
           <div class="resolve-detail-wrapper">
             <div class="correct mb-20 mt-20">
               正确答案：C &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 您的答案：C
