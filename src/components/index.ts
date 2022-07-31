@@ -16,6 +16,8 @@ import {
   Checkbox,
   Radio,
   RadioGroup,
+  Spin,
+  CheckboxGroup,
 } from "ant-design-vue";
 
 RecordItem.name = "record-item";
@@ -37,6 +39,8 @@ const components = [
   MainHeader,
   Radio,
   RadioGroup,
+  Spin,
+  CheckboxGroup,
 ];
 
 export default {
