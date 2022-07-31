@@ -23,6 +23,11 @@ const router = createRouter({
           name: "search",
           component: () => import("@/views/search/index.vue"),
         },
+        {
+          path: "/resolve",
+          name: "resolve",
+          component: () => import("@/views/resolve/index.vue"),
+        },
       ],
     },
     {
