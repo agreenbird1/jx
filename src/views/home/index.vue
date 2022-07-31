@@ -47,6 +47,7 @@
           </div>
           <record-item
             v-for="record in records"
+            :id="record.id"
             :key="record.id"
             :total-scores="record.totalScore"
             :scores="record.getScore"

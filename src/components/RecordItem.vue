@@ -7,7 +7,7 @@
         {{ questions }}/{{ totalQuestions }}</span
       >
     </div>
-    <div class="view br-5">查看</div>
+    <div class="view br-5" @click="$router.push(`/resolve?id=${id}`)">查看</div>
   </div>
 </template>
 
@@ -35,6 +35,10 @@ defineProps({
     required: true,
   },
   questions: {
+    type: Number,
+    required: true,
+  },
+  id: {
     type: Number,
     required: true,
   },
