@@ -6,7 +6,7 @@ import {
 } from "../types/axios";
 
 const service = axios.create({
-  timeout: 5000,
+  timeout: 10000,
   baseURL: import.meta.env.VITE_APP_BASEURL,
 });
 
