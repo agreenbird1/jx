@@ -244,7 +244,9 @@ const sendChapter = () => {
     handTime,
     userOtopicRecords,
   }).then((res) => {
-    router.replace(`/resolve?id=${res.data.data}`);
+    router.replace(
+      `/resolve?id=${res.data.data}&courseName=${route.query.course}&chapterName=${chapter.value?.content}`
+    );
   });
 };
 const submitChapterBtn = () => {

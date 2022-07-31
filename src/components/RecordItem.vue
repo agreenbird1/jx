@@ -7,7 +7,16 @@
         {{ questions }}/{{ totalQuestions }}</span
       >
     </div>
-    <div class="view br-5" @click="$router.push(`/resolve?id=${id}`)">查看</div>
+    <div
+      class="view br-5"
+      @click="
+        $router.push(
+          `/resolve?id=${id}&courseName=${courseName}&chapterName=${chapterName}`
+        )
+      "
+    >
+      查看
+    </div>
   </div>
 </template>
 
