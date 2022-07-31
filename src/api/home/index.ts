@@ -21,7 +21,7 @@ export const getAllSubjects = () => {
  */
 export const getRecords = (isShowAll = true) => {
   return request.get<IRecord[]>(
-    `/question/userHandExam/get/records?uid=${1}&isShowAll=${isShowAll}`
+    `/question/userHandExam/get/records?uid=${userStore.id}&isShowAll=${isShowAll}`
   );
 };
 

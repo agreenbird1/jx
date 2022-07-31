@@ -5,7 +5,7 @@ export interface IChapter {
   id: number;
   isDelete: 1 | 2; // 是否删除 1.未删除 2.已删除
   isFrontendShow: number;
-  otopicNumber: number; // 章节对应的题目数量
+  otopicNum: number; // 章节对应的题目数量
   parentId: number;
   position: number;
   type: number;
