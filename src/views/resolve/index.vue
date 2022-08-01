@@ -1,5 +1,5 @@
 <template>
-  <div class="resolve">
+  <div v-if="resolveData" class="resolve">
     <div class="resolve-wrapper">
       <main-header
         :title="
@@ -7,102 +7,212 @@
         "
       ></main-header>
       <div class="resolve-body">
-        <div class="type">单选题：共4题，每题一分</div>
-        <div class="subject">
-          <p class="subject-title mb-20">
-            1、甲为勒索财物，打算绑架富商之子吴某（5岁）。甲欺骗乙、丙说："富商欠我100万元不还，你们帮我扣押其子，成功后给你们每人10万元。"乙、丙将吴某扣押，但甲无法联系上富商，未能进行勒索。三天后，甲让乙、丙将吴某释放。吴某一人在回家路上溺水身亡。关于本案，下列哪一项选项是正确的？
-          </p>
-          <!-- <a-radio-group v-model:value="value">
-            <a-radio :style="radioStyle" :value="1"
-              >Option AOption AOption AOption AOption AOption AOption AOption
-              AOption AOption AOption AOption AOptionOption AOption AOption
-              AOption AOption AOption AOption AOption AOption AOption AOption
-              AOption AOpOption AOption AOption AOption AOption AOption AOption
-              AOption AOption AOption AOption AOption AOption AOption Ation
-              AOption A AOption A</a-radio
+        <template
+          v-for="resolveItems in typeResolveData"
+          :key="resolveItems.name"
+        >
+          <div class="type mt-20">
+            {{ resolveItems.name }}：共{{
+              resolveItems.resolveItems.length
+            }}题，每题{{ resolveItems.score }}分
+          </div>
+          <div
+            v-for="(resolveItem, idx) in resolveItems.resolveItems"
+            :key="resolveItem.id"
+            class="subject"
+          >
+            <p class="subject-title mb-20">
+              {{ idx + 1 + resolveItems.start }}、{{ resolveItem.title }}
+            </p>
+            <div
+              v-for="(option, oIdx) in resolveItem.options.split(`\n`)"
+              :key="oIdx"
+              :style="radioStyle"
+              :value="option[0]"
+              class="options"
             >
-            <a-radio :style="radioStyle" :value="2">Option B</a-radio>
-            <a-radio :style="radioStyle" :value="3">Option C</a-radio>
-            <a-radio :style="radioStyle" :value="4"> Option D </a-radio>
-          </a-radio-group> -->
-          <div class="resolve-detail-wrapper">
-            <div class="correct mb-20 mt-20">
-              正确答案：C &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 您的答案：C
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
-                style="color: #131936"
-                >全站正确率：39%</span
-              >
+              <span
+                :class="
+                  resolveItems.name === '单选题'
+                    ? resolveItem.answer === option[0]
+                      ? 'single'
+                      : 'single-default'
+                    : resolveItem.answer.includes(option[0])
+                    ? 'multiply'
+                    : 'multiply-default'
+                "
+              ></span>
+              <span>{{ option }}</span>
             </div>
-            <p>文字解析</p>
-            <div class="resolve-detail">
-              根据《刑法》第117条规定：“破坏轨道、桥梁、隧道、公路、机场、航道、灯塔、标志或者进行其他破坏活动，足以使火车、汽车、电车、船只、航空器发生倾覆、毁坏危险，尚未造成严重后果的，处三年以上十年以下有期徒刑。”
-              <br />
-              AD项：本罪是危险犯，客体是交通运输安全，陈某破坏轨道的行为足以导致火车发生倾覆、毁坏的危险，所以构成破坏交通设施罪，因及时发现，未造成火车倾覆、毁坏的事故，不构成本罪的结果加重犯。因此，AD项错误。<br />
-              BC项：陈某只是欲制造火车出轨事故，故意范围中并不包括
+            <div class="resolve-detail-wrapper">
+              <div class="correct mb-20 mt-20">
+                正确答案：{{ resolveItem.answer }}
+                <span
+                  :class="
+                    resolveItem.answer === resolveItem.selectAnswer
+                      ? ''
+                      : resolveItem.selectAnswer
+                      ? 'answer-wrong'
+                      : 'answer-unanswered'
+                  "
+                  >您的答案：{{
+                    resolveItem.selectAnswer
+                      ? resolveItem.selectAnswer
+                      : "未作答"
+                  }}</span
+                ><span style="color: #131936"
+                  >全站正确率：{{ resolveItem.correctRate }}%</span
+                >
+                <template v-if="resolveItem.optionSelectVos">
+                  <span>各选项选择率：</span>
+                  <span
+                    v-for="option in resolveItem.optionSelectVos"
+                    :key="option.option"
+                    style="margin-left: 20px"
+                  >
+                    <a-progress
+                      type="circle"
+                      :width="30"
+                      :status="
+                        !resolveItem.answer.includes(option.option)
+                          ? 'exception'
+                          : 'success'
+                      "
+                      :percent="option.optionRate"
+                      :format="() => option.option"
+                    />
+                  </span>
+                </template>
+              </div>
+              <p>文字解析</p>
+              <div class="resolve-detail">
+                {{ resolveItem.resolve }}
+              </div>
             </div>
           </div>
-        </div>
+        </template>
       </div>
     </div>
     <aside>
       <p>题号卡</p>
       <div class="scores-wrapper">
-        <div class="scores">得分：<span>3</span>/15</div>
-        <div class="correct-subjects">答对题数：<span>3</span>/15</div>
-      </div>
-      <div class="type-scores">
-        <p>单选题</p>
-        <div class="idx-list">
-          <span>1</span>
-          <span>2</span>
-          <span>3</span>
-          <span>4</span>
-          <span>5</span>
-          <span>6</span>
+        <div class="scores">
+          得分：<span>{{ resolveData?.getScore }}</span
+          >/{{ resolveData?.totalScore }}
+        </div>
+        <div class="correct-subjects">
+          答对题数：<span>{{ resolveData?.correctNum }}</span
+          >/{{ resolveData?.totalOtopic }}
         </div>
       </div>
-      <div class="type-scores">
-        <p>单选题</p>
+      <div
+        v-for="(typeItems, typeIdx) in typeResolveData"
+        :key="typeItems.name"
+        class="type-scores"
+      >
+        <p>{{ typeItems.name }}</p>
         <div class="idx-list">
-          <span>1</span>
-          <span>2</span>
-          <span>3</span>
-          <span>4</span>
-          <span>5</span>
-          <span>6</span>
-        </div>
-      </div>
-      <div class="type-scores">
-        <p>单选题</p>
-        <div class="idx-list">
-          <span>1</span>
-          <span>2</span>
-          <span>3</span>
-          <span>4</span>
-          <span>5</span>
-          <span>6</span>
+          <span
+            v-for="(idxItem, idx) in typeItems.resolveItems"
+            :key="idxItem.id"
+            :class="
+              idxItem.selectAnswer
+                ? idxItem.answer === idxItem.selectAnswer
+                  ? 'correct'
+                  : 'wrong'
+                : 'unanswered'
+            "
+            :style="{ borderRadius: typeIdx > 0 ? '5px' : '20px' }"
+          >
+            {{ idx + 1 + typeItems.start }}
+          </span>
         </div>
       </div>
     </aside>
   </div>
+  <div v-else class="empty-loading">
+    <a-spin tip="加载中，请稍后..."> </a-spin>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { getResolvesById } from "@/api";
-import { reactive } from "vue";
+import { getResolvesById, IResolveData, IResolveItem } from "@/api";
+import { computed, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
+const resolveData = ref<IResolveData>();
 const radioStyle = reactive({
   display: "flex",
   lineHeight: "30px",
 });
+// 根据题目类型分类渲染
+const typeResolveData = ref<
+  {
+    name: string;
+    resolveItems: IResolveItem[];
+    start: number;
+    score: string;
+  }[]
+>([
+  {
+    name: "单选题",
+    resolveItems: [],
+    start: 0,
+    score: "一",
+  },
+  {
+    name: "多选题",
+    resolveItems: [],
+    start: 0,
+    score: "二",
+  },
+  {
+    name: "不定项",
+    resolveItems: [],
+    start: 0,
+    score: "二",
+  },
+]);
+// 答案仅作显示，不可更改
+// 所以需要冻结
+const answers = computed<(string | string[])[]>(() => {
+  const ans: (string | string[])[] = [];
+  resolveData.value?.markOtopicVos.forEach((resolveItem, idx) => {
+    ans[idx] =
+      resolveItem.type === 1
+        ? resolveItem.answer
+        : resolveItem.answer.split(",");
+  });
+  return ans;
+});
 getResolvesById(route.query.id as unknown as number).then((res) => {
-  console.log(res.data);
+  resolveData.value = res.data.data;
+  resolveData.value.markOtopicVos.forEach((resolveItem, idx) => {
+    typeResolveData.value[resolveItem.type - 1].resolveItems.push(resolveItem);
+    answers.value![idx] =
+      resolveItem.type === 1
+        ? resolveItem.answer
+        : resolveItem.answer.split(",");
+  });
+  typeResolveData.value[1].start = typeResolveData.value[0].resolveItems.length;
+  typeResolveData.value[2].start =
+    typeResolveData.value[1].resolveItems.length +
+    typeResolveData.value[0].resolveItems.length;
+  console.log(resolveData.value);
 });
 </script>
 
 <style scoped lang="less">
+.empty-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-width: 1280px;
+  min-height: 630px;
+}
 .resolve {
   display: flex;
   margin-top: 20px;
@@ -128,6 +238,50 @@ getResolvesById(route.query.id as unknown as number).then((res) => {
       .subject {
         padding: 20px 0;
         border-bottom: 1px solid #d8d8d8;
+        .options {
+          display: flex;
+          font-size: 14px;
+          span:first-child {
+            margin-top: 9px;
+            width: 14px;
+            height: 14px;
+            margin-right: 10px;
+          }
+          span:last-child {
+            width: calc(100% - 50px);
+          }
+          .single {
+            border: 4px solid #4379ff;
+            border-radius: 7px;
+          }
+          .multiply {
+            position: relative;
+            border-radius: 4px;
+            background-color: #fff;
+            border: 1px solid @assistTextColor;
+            &::after {
+              position: absolute;
+              left: 50%;
+              top: 50%;
+              content: "";
+              width: 5px;
+              height: 5px;
+              background-color: #4379ff;
+              transform: translateX(-50%) translateY(-50%);
+            }
+          }
+          .single-default {
+            border: 1px solid @assistTextColor;
+            border-radius: 7px;
+          }
+          .multiply-default {
+            border: 1px solid @assistTextColor;
+            border-radius: 4px;
+          }
+          &:hover {
+            background-color: @bgColor;
+          }
+        }
         .subject-title {
           color: #131936;
           line-height: 22px;
@@ -139,10 +293,19 @@ getResolvesById(route.query.id as unknown as number).then((res) => {
             font-weight: 500;
             font-size: 14px;
             color: @jxColor;
+            span {
+              margin-left: 40px;
+            }
           }
           .resolve-detail {
             font-weight: 500;
             font-size: 14px;
+            color: @assistTextColor;
+          }
+          .answer-wrong {
+            color: @dangerColor;
+          }
+          .answer-unanswered {
             color: @assistTextColor;
           }
         }
@@ -191,6 +354,18 @@ getResolvesById(route.query.id as unknown as number).then((res) => {
         margin: 10px 0;
       }
       .idx-list {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        .correct {
+          background-color: #4379ff;
+        }
+        .wrong {
+          background-color: #f5312b;
+        }
+        .unanswered {
+          background-color: #eeeef4;
+        }
         span {
           display: inline-block;
           line-height: 39px;
@@ -198,8 +373,6 @@ getResolvesById(route.query.id as unknown as number).then((res) => {
           color: #fff;
           width: 39px;
           height: 39px;
-          border-radius: 20px;
-          background-color: #4379ff;
           margin-right: 25px;
           margin-bottom: 20px;
         }
