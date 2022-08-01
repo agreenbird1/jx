@@ -108,7 +108,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { RightOutlined } from "@ant-design/icons-vue";
 import {
   getAllSubjects,
@@ -125,15 +125,23 @@ const userStore = useUserStore();
 const records = ref<IRecord[]>();
 const objectiveSubject = ref<IChapter>();
 const rankList = ref<IRankItem[]>();
-getAllSubjects().then((res) => {
-  objectiveSubject.value = res.data.data[0];
-});
-getRecords(false).then((res) => {
-  records.value = res.data.data;
-});
-getRankList().then((res) => {
-  rankList.value = res.data.data;
-});
+watch(
+  () => userStore.nickname,
+  () => {
+    getAllSubjects().then((res) => {
+      objectiveSubject.value = res.data.data[0];
+    });
+    getRecords(false).then((res) => {
+      records.value = res.data.data;
+    });
+    getRankList().then((res) => {
+      rankList.value = res.data.data;
+    });
+  },
+  {
+    immediate: true,
+  }
+);
 </script>
 
 <style scoped lang="less">
