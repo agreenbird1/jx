@@ -1,17 +1,13 @@
 <template>
   <!-- 加载提示 -->
-  <template v-if="!currentSubject?.body || isSubmit">
-    <div class="empty-loading">
-      <a-spin
-        :tip="
-          isSubmit
-            ? '正在批改中，请稍后。如长时间未跳转，请刷新页面...'
-            : '题目加载中...'
-        "
-      >
-      </a-spin>
-    </div>
-  </template>
+  <empty-loading
+    v-if="!currentSubject?.body || isSubmit"
+    :tip="
+      isSubmit
+        ? '正在批改中，请稍后。如长时间未跳转，请刷新页面...'
+        : '题目加载中...'
+    "
+  />
   <div v-else class="do-o-topic">
     <header class="flex-bt">
       <div class="user pl-20">
@@ -21,6 +17,14 @@
       <div class="info flex-bt">
         <span>首页/{{ route.query.course }}（{{ chapter?.content }}）</span>
         <div class="time">
+          <span
+            style="color: #fff; cursor: pointer; margin-right: 20px"
+            @click="toggleFullScreen"
+          >
+            <component
+              :is="isFullScreen ? FullscreenExitOutlined : FullscreenOutlined"
+            />
+          </span>
           <span
             >已答题时间：{{ currentTimes.hours }}:{{ currentTimes.minutes }}:{{
               currentTimes.seconds
@@ -138,8 +142,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, createVNode, onBeforeUnmount, ref } from "vue";
+import { computed, createVNode, onBeforeUnmount, ref, watch } from "vue";
 import { notification, Modal } from "ant-design-vue";
+import {
+  FullscreenOutlined,
+  FullscreenExitOutlined,
+} from "@ant-design/icons-vue";
 import { useRoute } from "vue-router";
 import { useUserStore } from "@/store/user";
 import {
@@ -157,6 +165,7 @@ const route = useRoute();
 const userStore = useUserStore();
 const storage_key = (userStore.id + "" + route.query.chapterId) as string;
 let isSubmit = ref(false);
+const isFullScreen = ref(false);
 // 保存当前正在做的题目、以及index，用于保存答案和标记
 const currentSubject = ref<{
   idx: number;
@@ -281,7 +290,20 @@ const startTimer = () => {
     if (!(++currentSeconds.value < totalSeconds.value)) {
       clearInterval(timer as NodeJS.Timer);
       // 交卷逻辑
+      isSubmit.value = true;
       sendChapter();
+    }
+    if (totalSeconds.value - currentSeconds.value === 10) {
+      notification.info({
+        duration: null,
+        description: () =>
+          `${totalSeconds.value - currentSeconds.value}秒后将自动交卷！`,
+        message: "注意！",
+        style: {
+          backgroundColor: "#ddebf6",
+        },
+        key: "handlePage",
+      });
     }
   }, 1000);
 };
@@ -351,11 +373,28 @@ const handleClosePage = () => {
     });
   }
   clearInterval(timer as NodeJS.Timer);
+  // 清除遗留的提醒框
   notification.close("notification");
+  notification.close("handlePage");
+  if (isFullScreen.value) {
+    document.exitFullscreen();
+  }
 };
 onBeforeUnmount(handleClosePage);
+watch(() => isSubmit.value, handleClosePage);
 // 页面刷新需要刷新
 window.onbeforeunload = handleClosePage;
+function toggleFullScreen() {
+  if (!document.fullscreenElement) {
+    isFullScreen.value = true;
+    document.documentElement.requestFullscreen();
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+      isFullScreen.value = false;
+    }
+  }
+}
 </script>
 
 <style scoped lang="less">
