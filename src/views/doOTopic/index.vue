@@ -231,6 +231,7 @@ const changeSubject = (idx: number) => {
   }
 };
 const sendChapter = () => {
+  handleClosePage();
   storage.deleteSession(storage_key);
   isSubmit.value = true;
   const userOtopicRecords: ISubmitSubject[] = [];
@@ -376,12 +377,12 @@ const handleClosePage = () => {
   // 清除遗留的提醒框
   notification.close("notification");
   notification.close("handlePage");
-  if (isFullScreen.value) {
+  if (isFullScreen.value && document.exitFullscreen) {
     document.exitFullscreen();
+    isFullScreen.value = false;
   }
 };
 onBeforeUnmount(handleClosePage);
-watch(() => isSubmit.value, handleClosePage);
 // 页面刷新需要刷新
 window.onbeforeunload = handleClosePage;
 function toggleFullScreen() {
