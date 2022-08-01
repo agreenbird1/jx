@@ -1,10 +1,17 @@
 <template>
   <div class="empty-loading">
-    <a-spin tip="加载中，请稍后..."> </a-spin>
+    <a-spin :tip="tip"> </a-spin>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+defineProps({
+  tip: {
+    type: String,
+    default: () => "加载中，请稍后...",
+  },
+});
+</script>
 
 <style scoped lang="less">
 .empty-loading {
