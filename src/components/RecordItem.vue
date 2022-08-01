@@ -1,7 +1,7 @@
 <template>
   <div class="record-item br-5 flex-bt">
     <div class="chapter">
-      <span>{{ courseName }} {{ chapterName }}</span>
+      <span>{{ isShowCourseName ? courseName : "" }} {{ chapterName }}</span>
       <span
         >得分: {{ scores }}/{{ totalScores }} &nbsp;&nbsp;&nbsp;&nbsp; 做题数:
         {{ questions }}/{{ totalQuestions }}</span
@@ -26,6 +26,11 @@ defineProps({
     type: String,
     required: false,
     default: "",
+  },
+  isShowCourseName: {
+    type: Boolean,
+    required: false,
+    default: true,
   },
   chapterName: {
     type: String,
