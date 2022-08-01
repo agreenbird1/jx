@@ -63,28 +63,36 @@
                 ><span style="color: #131936"
                   >全站正确率：{{ resolveItem.correctRate }}%</span
                 >
-                <template v-if="resolveItem.optionSelectVos">
-                  <span>各选项选择率：</span>
-                  <span
-                    v-for="option in resolveItem.optionSelectVos"
-                    :key="option.option"
-                    style="margin-left: 20px"
-                  >
-                    <a-progress
-                      type="circle"
-                      :width="30"
-                      :status="
-                        !resolveItem.answer.includes(option.option)
-                          ? 'exception'
-                          : 'success'
-                      "
-                      :percent="option.optionRate"
-                      :format="() => option.option"
-                    />
-                  </span>
-                </template>
               </div>
-              <p>文字解析</p>
+              <template v-if="resolveItem.optionSelectVos">
+                <span style="color: #4379ff; font-weight: normal"
+                  >各选项选择率：</span
+                >
+                <span
+                  v-for="option in resolveItem.optionSelectVos"
+                  :key="option.option"
+                  style="margin-left: 20px; font-weight: 400"
+                  :style="{
+                    color: resolveItem.answer.includes(option.option)
+                      ? '#4379ff'
+                      : '#f5312b',
+                  }"
+                >
+                  <a-progress
+                    type="circle"
+                    :width="30"
+                    :status="
+                      !resolveItem.answer.includes(option.option)
+                        ? 'exception'
+                        : 'success'
+                    "
+                    :percent="option.optionRate"
+                    :format="() => option.option"
+                  />
+                  {{ option.optionRate }}%
+                </span>
+              </template>
+              <p class="mt-10">文字解析</p>
               <div class="resolve-detail">
                 {{ resolveItem.resolve }}
               </div>
@@ -106,7 +114,8 @@
 import { getResolvesById, IResolveData, IResolveItem } from "@/api";
 import { computed, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
-import ResolveTitlesBar from "./ResolveTitlesBar.vue";
+import scrollTo from "@/utils/scrollTo";
+import ResolveTitlesBar from "./components/ResolveTitlesBar.vue";
 
 const route = useRoute();
 const resolveData = ref<IResolveData>();
@@ -155,12 +164,10 @@ const answers = computed<(string | string[])[]>(() => {
   return ans;
 });
 const scrollToTitle = (idx: number) => {
-  const app = document.querySelector("#app")!;
   const subjects = document.querySelectorAll(
     ".subject"
   ) as unknown as HTMLDivElement[];
-  console.dir(subjects[idx].offsetTop);
-  app.scrollTop = subjects[idx].offsetTop;
+  scrollTo(subjects[idx].offsetTop);
 };
 getResolvesById(route.query.id as unknown as number).then((res) => {
   resolveData.value = res.data.data;
@@ -273,6 +280,11 @@ getResolvesById(route.query.id as unknown as number).then((res) => {
           }
           .answer-unanswered {
             color: @assistTextColor;
+          }
+          :deep(.ant-progress) {
+            svg {
+              width: 30px;
+            }
           }
         }
       }
