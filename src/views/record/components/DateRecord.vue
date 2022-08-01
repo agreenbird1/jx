@@ -18,6 +18,8 @@
         :total-questions="record.totalOtopic"
         :questions="record.doOtopicNum"
         :chapter-name="record.content"
+        :course-name="record.secondChapterContent"
+        :is-show-course-name="false"
         class="mt-20"
       />
     </div>

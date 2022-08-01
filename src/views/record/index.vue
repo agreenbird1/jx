@@ -38,7 +38,7 @@ getRecords().then((res) => {
   }
   // 日期当前格式为 2022-07-12 格式，直接去除 - 符号，再用一元运算符转换即可
   dateRecords.value.sort(
-    (a, b) => +a.date.replaceAll("-", "") - +b.date.replaceAll("-", "")
+    (a, b) => +b.date.replaceAll("-", "") - +a.date.replaceAll("-", "")
   );
 });
 </script>
