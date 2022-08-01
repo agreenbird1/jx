@@ -155,6 +155,7 @@ import type { Rule } from "ant-design-vue/es/form";
 import { useUserStore } from "@/store/user";
 import { sendCode, loginByCode as loginByCodeApi } from "@/api";
 import storage from "@/utils/storage";
+import router from "@/router";
 
 const searchWords = ref(""); // 搜索框内容
 let Countdown = ref(60);

@@ -68,32 +68,40 @@
         </template>
       </div>
       <div class="rank br-5 mt-20">
-        <div class="title mb-20 pl-20">做题排名</div>
-        <div class="rank-list">
-          <div
-            v-for="rankItem in rankList"
-            :key="rankItem.nickname"
-            class="rank-item flex-bt mb-20"
-          >
-            <div class="student">
-              <template v-if="rankItem.rank === 3">
-                <img src="@/assets/icons/rank3.png" />
-              </template>
-              <template v-else-if="rankItem.rank === 2">
-                <img src="@/assets/icons/rank2.png" />
-              </template>
-              <template v-else-if="rankItem.rank === 1">
-                <img src="@/assets/icons/rank1.png" />
-              </template>
-              <template v-else>
-                <span>{{ rankItem.rank }}</span>
-              </template>
-              <span>{{ rankItem.nickname }}</span>
+        <template v-if="rankList?.length">
+          <div class="title mb-20 pl-20">做题排名</div>
+          <div class="rank-list">
+            <div
+              v-for="rankItem in rankList"
+              :key="rankItem.nickname"
+              class="rank-item flex-bt mb-20"
+            >
+              <div class="student">
+                <template v-if="rankItem.rank === 3">
+                  <img src="@/assets/icons/rank3.png" />
+                </template>
+                <template v-else-if="rankItem.rank === 2">
+                  <img src="@/assets/icons/rank2.png" />
+                </template>
+                <template v-else-if="rankItem.rank === 1">
+                  <img src="@/assets/icons/rank1.png" />
+                </template>
+                <template v-else>
+                  <span>{{ rankItem.rank }}</span>
+                </template>
+                <span>{{ rankItem.nickname }}</span>
+              </div>
+              <span>{{ rankItem.doQuestionNum }}</span>
             </div>
-            <span>{{ rankItem.doQuestionNum }}</span>
           </div>
-        </div>
-        <div class="rank-end">- 排名仅展示前50名 -</div>
+          <div class="rank-end">- 排名仅展示前50名 -</div>
+        </template>
+        <template v-else>
+          <div class="rank-empty">
+            <img src="@/assets/icons/empty.png" />
+            <span>暂时没有人做题哦，赶快去做题争夺榜首吧！</span>
+          </div>
+        </template>
       </div>
     </aside>
   </div>
@@ -213,6 +221,18 @@ getRankList().then((res) => {
         text-align: center;
         font-size: 12px;
         color: @assistTextColor;
+      }
+      .rank-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: @assistTextColor;
+        font-size: 14px;
+        span {
+          margin-top: 10px;
+        }
       }
     }
     .empty {
