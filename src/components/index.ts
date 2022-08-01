@@ -18,6 +18,7 @@ import {
   RadioGroup,
   Spin,
   CheckboxGroup,
+  Progress,
 } from "ant-design-vue";
 
 RecordItem.name = "record-item";
@@ -41,6 +42,7 @@ const components = [
   RadioGroup,
   Spin,
   CheckboxGroup,
+  Progress,
 ];
 
 export default {

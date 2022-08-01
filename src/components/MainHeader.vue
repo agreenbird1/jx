@@ -1,5 +1,5 @@
 <template>
-  <div class="main-header pb-20 flex-bt">
+  <div class="main-header flex-bt">
     <span>{{ title }}</span>
     <router-link to="/">
       <span>&nbsp;返回题库&nbsp;</span>
@@ -15,6 +15,8 @@ defineProps<{
 
 <style scoped lang="less">
 .main-header {
+  font-size: 16px;
+  font-weight: bold;
   & span:last-child {
     font-size: 12px;
     color: @jxColor;
