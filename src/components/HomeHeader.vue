@@ -7,10 +7,11 @@
         </router-link>
         <div class="search-bar">
           <a-input
-            v-model="searchWords"
+            v-model:value="searchWords"
             placeholder="搜索题目名称"
             :bordered="false"
             allow-clear
+            @press-enter="searchSubjects"
           >
             <template #prefix>
               <search-outlined />
@@ -257,6 +258,13 @@ const logout = () => {
   });
   storage.deleteStorage("user");
   message.success("退出成功！");
+};
+const searchSubjects = () => {
+  if (!searchWords.value.trim()) message.warning("搜索内容不能为空！");
+  else {
+    router.push(`/search?searchWords=${searchWords.value}`);
+    searchWords.value = "";
+  }
 };
 // 清除可能遗漏的定时器
 onBeforeUnmount(() => clearInterval(timer as NodeJS.Timer));
