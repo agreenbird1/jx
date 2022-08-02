@@ -170,11 +170,18 @@ const scrollToTitle = (idx: number) => {
   const layout = document.querySelector(".layout") as HTMLDivElement;
   // 说明是最后一个子元素，存在达不到顶部的可能
   // 它能达到的最高的位置在 总高度减去 当前屏幕的高度的位置
-  let isLast = idx === subjects.length - 1;
+
+  // 但是！不能只判断最后一个元素，比如在屏幕高度比较大的时候，有可能显示多个子类
+  // 所以，需要通过判断当前的子元素的 offsetTop 是否大于整个列表能够达到的最高的高度
+  // 比如 app 最大能卷曲的（scroll）的高度只为 offsetHeight - documentElement.clientHeight
+  // 所以只需要判断底部的高度即可！
   const lastScrollTop =
     layout.offsetHeight - document.documentElement.clientHeight;
   if (lastScrollTop > 0)
-    if (isLast)
+    if (
+      layout.offsetHeight - document.documentElement.clientHeight <
+      subjects[idx].offsetTop
+    )
       scrollTo(layout.offsetHeight - document.documentElement.clientHeight);
     else scrollTo(subjects[idx].offsetTop);
 };
