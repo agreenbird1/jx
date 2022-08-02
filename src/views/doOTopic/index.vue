@@ -242,7 +242,8 @@ const sendChapter = () => {
       uid: userStore.id,
       oid: subjects![idx].id,
       chapterId: chapter.value!.chapterId,
-      selectAnswer: typeof answer === "string" ? answer : answer.join(","),
+      selectAnswer:
+        typeof answer === "string" ? answer : answer.sort().join(","),
       otopicScore: subjects![idx].score,
     });
   });
