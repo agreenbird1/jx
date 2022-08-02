@@ -167,7 +167,13 @@ const scrollToTitle = (idx: number) => {
   const subjects = document.querySelectorAll(
     ".subject"
   ) as unknown as HTMLDivElement[];
-  scrollTo(subjects[idx].offsetTop);
+  const layout = document.querySelector(".layout") as HTMLDivElement;
+  // 说明是最后一个子元素，存在达不到顶部的可能
+  // 它能达到的最高的位置在 总高度减去 当前屏幕的高度的位置
+  let isLast = idx === subjects.length - 1;
+  if (isLast)
+    scrollTo(layout.offsetHeight - document.documentElement.clientHeight);
+  else scrollTo(subjects[idx].offsetTop);
 };
 getResolvesById(route.query.id as unknown as number).then((res) => {
   resolveData.value = res.data.data;
