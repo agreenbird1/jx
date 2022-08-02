@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from "vue-router";
+import scrollTo from "@/utils/scrollTo";
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -36,9 +37,8 @@ const router = createRouter({
       component: () => import("@/views/doOTopic/index.vue"),
     },
   ],
-  scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) return savedPosition;
-    return { top: 0, left: 0 };
+  scrollBehavior() {
+    scrollTo(0);
   },
 });
 
