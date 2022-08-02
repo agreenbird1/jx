@@ -20,6 +20,7 @@ import {
   Spin,
   CheckboxGroup,
   Progress,
+  Row,
 } from "ant-design-vue";
 
 RecordItem.name = "record-item";
@@ -46,6 +47,7 @@ const components = [
   CheckboxGroup,
   Progress,
   EmptyLoading,
+  Row,
 ];
 
 export default {
