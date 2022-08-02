@@ -11,7 +11,7 @@
           v-for="resolveItems in typeResolveData"
           :key="resolveItems.name"
         >
-          <div class="type mt-20">
+          <div v-if="resolveItems.resolveItems.length" class="type mt-20">
             {{ resolveItems.name }}：共{{
               resolveItems.resolveItems.length
             }}题，每题{{ resolveItems.score }}分

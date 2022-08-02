@@ -11,30 +11,31 @@
         >/{{ resolveData?.totalOtopic }}
       </div>
     </div>
-    <div
+    <template
       v-for="(typeItems, typeIdx) in typeResolveData"
       :key="typeItems.name"
-      class="type-scores"
     >
-      <p>{{ typeItems.name }}</p>
-      <div class="idx-list">
-        <span
-          v-for="(idxItem, idx) in typeItems.resolveItems"
-          :key="idxItem.id"
-          :class="
-            idxItem.selectAnswer
-              ? idxItem.answer === idxItem.selectAnswer
-                ? 'correct'
-                : 'wrong'
-              : 'unanswered'
-          "
-          :style="{ borderRadius: typeIdx > 0 ? '5px' : '20px' }"
-          @click="scrollToTitle(idx + typeItems.start)"
-        >
-          {{ idx + 1 + typeItems.start }}
-        </span>
+      <div v-if="typeItems.resolveItems.length" class="type-scores">
+        <p>{{ typeItems.name }}</p>
+        <div class="idx-list">
+          <span
+            v-for="(idxItem, idx) in typeItems.resolveItems"
+            :key="idxItem.id"
+            :class="
+              idxItem.selectAnswer
+                ? idxItem.answer === idxItem.selectAnswer
+                  ? 'correct'
+                  : 'wrong'
+                : 'unanswered'
+            "
+            :style="{ borderRadius: typeIdx > 0 ? '5px' : '20px' }"
+            @click="scrollToTitle(idx + typeItems.start)"
+          >
+            {{ idx + 1 + typeItems.start }}
+          </span>
+        </div>
       </div>
-    </div>
+    </template>
   </aside>
 </template>
 
