@@ -1,60 +1,148 @@
 <template>
-  <div class="search mt-20">
-    <main-header title="搜索作答"></main-header>
-    <div class="search-body br-5">
-      <div class="type mb-20">
-        <span class="type-button mr-20">单选</span>
-        <span>题号1202020</span>
-      </div>
-      <p class="subject-title mb-20">
-        <span class="type-button">单选</span>
-        1、甲为勒索财物，打算绑架富商之子吴某（5岁）。甲欺骗乙、丙说："富商欠我100万元不还，你们帮我扣押其子，成功后给你们每人10万元。"乙、丙将吴某扣押，但甲无法联系上富商，未能进行勒索。三天后，甲让乙、丙将吴某释放。吴某一人在回家路上溺水身亡。关于本案，下列哪一项选项是正确的？
-      </p>
-      <a-radio-group v-model:value="value">
-        <a-radio :style="radioStyle" :value="1"
-          >Option AOption AOption AOption AOption AOption AOption AOption
-          AOption AOption AOption AOption AOptionOption AOption AOption AOption
-          AOption AOption AOption AOption AOption AOption AOption AOption
-          AOpOption AOption AOption AOption AOption AOption AOption AOption
-          AOption AOption AOption AOption AOption AOption Ation AOption A
-          AOption A</a-radio
-        >
-        <a-radio :style="radioStyle" :value="2">Option B</a-radio>
-        <a-radio :style="radioStyle" :value="3">Option C</a-radio>
-        <a-radio :style="radioStyle" :value="4"> Option D </a-radio>
-      </a-radio-group>
-      <div class="confirm">
-        <span>确认作答</span>
-      </div>
-      <div class="resolve mt-20">
-        <div class="correct mb-20">
-          正确答案：C &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 您的答案：C
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #131936"
-            >全站正确率：39%</span
-          >
-        </div>
-        <p>文字解析</p>
-        <div class="resolve-body">
-          根据《刑法》第117条规定：“破坏轨道、桥梁、隧道、公路、机场、航道、灯塔、标志或者进行其他破坏活动，足以使火车、汽车、电车、船只、航空器发生倾覆、毁坏危险，尚未造成严重后果的，处三年以上十年以下有期徒刑。”
-          <br />
-          AD项：本罪是危险犯，客体是交通运输安全，陈某破坏轨道的行为足以导致火车发生倾覆、毁坏的危险，所以构成破坏交通设施罪，因及时发现，未造成火车倾覆、毁坏的事故，不构成本罪的结果加重犯。因此，AD项错误。<br />
-          BC项：陈某只是欲制造火车出轨事故，故意范围中并不包括
-        </div>
-      </div>
+  <template v-if="isLoading">
+    <empty-loading tip="搜索中，请稍后..." />
+  </template>
+  <template v-else-if="!searchSubjects.length">
+    <div class="empty">
+      <img src="@/assets/icons/empty.png" />
+      <span class="mt-20"
+        >对不起，没有您想要搜索的结果，换个关键词试试吧？</span
+      >
     </div>
+  </template>
+  <div v-else class="search mt-20">
+    <main-header title="搜索作答"></main-header>
+    <DynamicScroller
+      :items="searchSubjects"
+      :min-item-size="265"
+      class="scroller"
+    >
+      <template #default="{ item, index, active }">
+        <DynamicScrollerItem
+          :item="item"
+          :active="active"
+          :size-dependencies="[item.isSubmit]"
+          :data-index="index"
+        >
+          <div class="search-body mt-20 br-5">
+            <div class="type mb-20">
+              <span class="type-button mr-20">
+                {{
+                  item.type === 1 ? "单选" : item.type === 2 ? "多选" : "不定项"
+                }}
+              </span>
+              <span>题号{{ item.topicNumber }}</span>
+            </div>
+            <p class="subject-title mb-20">{{ index + 1 }}、{{ item.title }}</p>
+            <a-radio-group
+              v-if="item.type === 1"
+              v-model:value="item.answer"
+              :disabled="item.isSubmit"
+            >
+              <a-radio
+                v-for="(option, oIdx) in item.options.split(`\n`)"
+                :key="oIdx"
+                :style="radioStyle"
+                :value="option[0]"
+                >{{ option }}</a-radio
+              >
+            </a-radio-group>
+            <a-checkbox-group
+              v-else
+              v-model:value="item.answer"
+              style="width: 100%"
+              :disabled="item.isSubmit"
+            >
+              <a-row
+                v-for="(option, oIdx) in item.options.split(`\n`)"
+                :key="oIdx"
+              >
+                <a-checkbox :value="option[0]">{{ option }}</a-checkbox>
+              </a-row>
+            </a-checkbox-group>
+            <div v-if="!item.isSubmit" class="confirm">
+              <span @click="submitSubject(item)">确认作答</span>
+            </div>
+            <div v-else class="resolve mt-20">
+              <div class="correct mb-20">
+                正确答案：{{ item.rightAnswer }}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <span
+                  :style="{
+                    color: item.otopicStatus === 1 ? '#4379ff' : '#f5312b',
+                  }"
+                  >您的答案：{{
+                    item.type === 1 ? item.answer : item.answer.join(",")
+                  }}</span
+                >
+              </div>
+              <p>文字解析</p>
+              <div class="resolve-body">
+                {{ item.resolve }}
+              </div>
+            </div>
+          </div>
+        </DynamicScrollerItem>
+      </template>
+    </DynamicScroller>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import {
+  ISearchSubject,
+  searchSubjectByKeyWords,
+  searchSubjectResult,
+} from "@/api";
+import { useUserStore } from "@/store/user";
+import { ref, watch } from "vue";
+import { useRoute } from "vue-router";
 
-const value = ref("");
+const route = useRoute();
+const userStore = useUserStore();
+const searchSubjects = ref<ISearchSubject[]>([]);
+const isLoading = ref(false);
 const radioStyle = ref({
   display: "flex",
   fontSize: "14px",
   fontFamily: "PingFangSC",
   lineHeight: "30px",
 });
+const submitSubject = async (subject: ISearchSubject) => {
+  const selectAnswer =
+    typeof subject.answer === "string"
+      ? subject.answer
+      : subject.answer!.sort().join(",");
+  const { data } = await searchSubjectResult({
+    uid: userStore.id,
+    oid: subject.id,
+    chapterId: subject.chapterId,
+    selectAnswer,
+    otopicScore: subject.type === 1 ? 1 : 2,
+  });
+  subject.isSubmit = true;
+  const { answer, resolve, otopicStatus } = data.data;
+  subject.rightAnswer = answer;
+  subject.resolve = resolve;
+  subject.otopicStatus = otopicStatus;
+};
+watch(
+  () => route.query.searchWords,
+  () => {
+    isLoading.value = true;
+    searchSubjectByKeyWords(route.query.searchWords as string).then((res) => {
+      isLoading.value = false;
+      searchSubjects.value = res.data.data;
+      searchSubjects.value.forEach((subject) => {
+        subject.isSubmit = false;
+        subject.answer = subject.type === 1 ? "" : [];
+      });
+    });
+  },
+  {
+    immediate: true,
+  }
+);
 </script>
 
 <style scoped lang="less">
@@ -72,7 +160,6 @@ const radioStyle = ref({
   padding: 20px;
   background-color: #fff;
   .search-body {
-    .hoverShadow();
     padding: 20px;
     border: 1px solid #d8d8d8;
     .type {
@@ -105,6 +192,7 @@ const radioStyle = ref({
         line-height: 20px;
         background-color: @jxColor;
         border-radius: 5px;
+        cursor: pointer;
       }
     }
     .resolve {
@@ -118,5 +206,18 @@ const radioStyle = ref({
       }
     }
   }
+  .scroller {
+    height: 100%;
+  }
+}
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  color: @assistTextColor;
+  height: 100vh;
+  margin-top: 20px;
+  background-color: #fff;
 }
 </style>
