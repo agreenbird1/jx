@@ -2,6 +2,7 @@ import type { App } from "vue";
 import RecordItem from "./RecordItem.vue";
 import MainHeader from "./MainHeader.vue";
 import EmptyLoading from "./EmptyLoading.vue";
+import BackToTop from "./BackToTop.vue";
 import {
   Input,
   Dropdown,
@@ -26,6 +27,7 @@ import {
 RecordItem.name = "record-item";
 MainHeader.name = "main-header";
 EmptyLoading.name = "empty-loading";
+BackToTop.name = "back-to-top";
 const components = [
   Input,
   Dropdown,
@@ -48,6 +50,7 @@ const components = [
   Progress,
   EmptyLoading,
   Row,
+  BackToTop,
 ];
 
 export default {
