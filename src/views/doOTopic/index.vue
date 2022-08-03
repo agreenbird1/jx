@@ -15,7 +15,10 @@
         <span>昵称：{{ userStore.nickname }}</span>
       </div>
       <div class="info flex-bt">
-        <span>首页/{{ route.query.course }}（{{ chapter?.content }}）</span>
+        <span
+          >首页/{{ route.query.course
+          }}{{ route.query.chapterId ? `（${route.query.chapterName}）` : "" }}
+        </span>
         <div class="time">
           <span
             style="color: #fff; cursor: pointer; margin-right: 20px"
@@ -49,9 +52,7 @@
               @click="changeSubject(i + title.start - 1)"
             >
               {{ i + title.start
-              }}<span
-                class="punctuation"
-                :class="{ answered: answers[i - 1 + title.start].length }"
+              }}<span :class="{ answered: answers[i - 1 + title.start].length }"
                 >{{
                   marks![i - 1 + title.start]
                     ? "?"
@@ -142,7 +143,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, createVNode, onBeforeUnmount, ref, watch } from "vue";
+import { computed, createVNode, onBeforeUnmount, ref } from "vue";
 import { notification, Modal } from "ant-design-vue";
 import {
   FullscreenOutlined,
@@ -151,6 +152,7 @@ import {
 import { useRoute } from "vue-router";
 import { useUserStore } from "@/store/user";
 import {
+  getSubjectsAtRandom,
   getSubjectsByChapterId,
   IChapterSubject,
   IChapterSubjectDetails,
@@ -164,7 +166,8 @@ import router from "@/router";
 const route = useRoute();
 const userStore = useUserStore();
 const storage_key = (userStore.id + "" + route.query.chapterId) as string;
-let isSubmit = ref(false);
+const isSubmit = ref(false);
+const isRandom = ref("");
 const isFullScreen = ref(false);
 // 保存当前正在做的题目、以及index，用于保存答案和标记
 const currentSubject = ref<{
@@ -256,7 +259,7 @@ const sendChapter = () => {
     userOtopicRecords,
   }).then((res) => {
     router.replace(
-      `/resolve?id=${res.data.data}&courseName=${route.query.course}&chapterName=${chapter.value?.content}`
+      `/resolve?id=${res.data.data}&courseName=${route.query.course}&chapterName=${route.query.chapterName}`
     );
   });
 };
@@ -303,15 +306,15 @@ const startTimer = () => {
         message: "注意！",
         style: {
           backgroundColor: "#ddebf6",
+          color: "#a1a4b3",
         },
         key: "handlePage",
       });
     }
   }, 1000);
 };
-// 初始化获取数据
-getSubjectsByChapterId(route.query.chapterId as string).then((res) => {
-  const tempChapter = res.data.data[0];
+const initSubjects = (data: IChapterSubject[]) => {
+  const tempChapter = data[0];
   // 按照单选 => 多选 => 不定项排序
   tempChapter.otopicFrontVos.sort((a, b) => a.type - b.type);
   tempChapter.otopicFrontVos.forEach(
@@ -363,25 +366,36 @@ getSubjectsByChapterId(route.query.chapterId as string).then((res) => {
       },
     });
   else startTimer();
-});
+};
+if (!route.query.isRandom) {
+  getSubjectsByChapterId(route.query.chapterId as string).then((res) => {
+    initSubjects(res.data.data);
+  });
+} else {
+  isRandom.value = route.query.isRandom as string;
+  getSubjectsAtRandom(route.query.chapterId as string).then((res) => {
+    initSubjects(res.data.data);
+  });
+}
+// 初始化获取数据
 
 // 刷新！离开当前页所作处理
 const handleClosePage = () => {
-  if (!isSubmit.value) {
+  if (!isSubmit.value && !isRandom.value) {
     storage.setSession(storage_key, {
       time: currentSeconds.value,
       marks: marks.value,
       answers: answers.value,
     });
   }
-  clearInterval(timer as NodeJS.Timer);
-  // 清除遗留的提醒框
-  notification.close("notification");
-  notification.close("handlePage");
   if (isFullScreen.value && document.exitFullscreen) {
     document.exitFullscreen();
     isFullScreen.value = false;
   }
+  clearInterval(timer as NodeJS.Timer);
+  // 清除遗留的提醒框
+  notification.close("notification");
+  notification.close("handlePage");
 };
 onBeforeUnmount(handleClosePage);
 // 页面刷新需要刷新
@@ -400,15 +414,6 @@ function toggleFullScreen() {
 </script>
 
 <style scoped lang="less">
-.empty-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  min-width: 1280px;
-  min-height: 630px;
-}
 .do-o-topic {
   user-select: none;
   width: 100%;
@@ -416,14 +421,15 @@ function toggleFullScreen() {
   min-width: 1280px;
   min-height: 630px;
   font-size: 14px;
+  transition: all 0.5s ease-in;
   header {
     height: 70px;
     background: linear-gradient(180deg, #a9d9f7 0%, #77bafd 5%, #70b2ed 100%);
     .user {
       display: flex;
       align-items: center;
-      color: #fff;
       width: 250px;
+      color: #fff;
       img {
         width: 48px;
         margin-right: 10px;
@@ -565,6 +571,7 @@ function toggleFullScreen() {
           width: 56px;
           height: 20px;
           text-align: center;
+          line-height: 20px;
           background: linear-gradient(180deg, #ffffff 0%, #abc6ed 100%);
           border: 1px solid #9cafee;
           cursor: pointer;
