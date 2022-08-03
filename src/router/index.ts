@@ -1,5 +1,10 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import scrollTo from "@/utils/scrollTo";
+import { useUserStore } from "@/store/user";
+import pinia from "@/store";
+import { message } from "ant-design-vue";
+
+const userStore = useUserStore(pinia);
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -40,6 +45,12 @@ const router = createRouter({
   scrollBehavior() {
     scrollTo(0);
   },
+});
+router.beforeEach((to, from) => {
+  if (to.path !== "/" && !userStore.id) {
+    message.warning("请登录后再试！");
+    return false;
+  }
 });
 
 export default router;
