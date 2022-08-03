@@ -102,6 +102,7 @@ import {
   searchSubjectResult,
 } from "@/api";
 import { useUserStore } from "@/store/user";
+import { message } from "ant-design-vue";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
@@ -116,6 +117,9 @@ const radioStyle = ref({
   lineHeight: "30px",
 });
 const submitSubject = async (subject: ISearchSubject) => {
+  if (subject.answer?.length === 0) {
+    return message.warning("请先作答后再提交！");
+  }
   const selectAnswer =
     typeof subject.answer === "string"
       ? subject.answer
