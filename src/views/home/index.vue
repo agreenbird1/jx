@@ -10,7 +10,16 @@
             :key="course.id"
             :tab="course.content"
           >
-            <div class="random flex-bt">
+            <div
+              class="random flex-bt"
+              @click="
+                $router.push(
+                  `/doOTopic?course=${course.content}&chapterId=${
+                    course.id
+                  }&isRandom=${true}&chapterName=随机出题`
+                )
+              "
+            >
               <span>随机出题</span>
               <right-outlined />
             </div>
@@ -21,7 +30,7 @@
                 class="chapter mt-20 mr-20 flex-bt"
                 @click="
                   $router.push(
-                    `/doOTopic?course=${course.content}&chapterId=${chapter.id}`
+                    `/doOTopic?course=${course.content}&chapterId=${chapter.id}&chapterName=${chapter.content}`
                   )
                 "
               >
