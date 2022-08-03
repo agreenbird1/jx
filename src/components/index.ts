@@ -22,6 +22,7 @@ import {
   CheckboxGroup,
   Progress,
   Row,
+  Switch,
 } from "ant-design-vue";
 
 RecordItem.name = "record-item";
@@ -51,6 +52,7 @@ const components = [
   EmptyLoading,
   Row,
   BackToTop,
+  Switch,
 ];
 
 export default {

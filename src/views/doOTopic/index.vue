@@ -8,7 +8,7 @@
         : '题目加载中...'
     "
   />
-  <div v-else class="do-o-topic">
+  <div v-else class="do-o-topic" :class="isDark ? 'is-dark' : ''">
     <header class="flex-bt">
       <div class="user pl-20">
         <img :src="userStore.avatar" />
@@ -18,6 +18,10 @@
         <span
           >首页/{{ route.query.course
           }}{{ route.query.chapterId ? `（${route.query.chapterName}）` : "" }}
+          <a-switch v-model:checked="isDark" size="small">
+            <template #checkedChildren><smile-filled /></template>
+            <template #unCheckedChildren><meh-filled /></template>
+          </a-switch>
         </span>
         <div class="time">
           <span
@@ -148,6 +152,8 @@ import { notification, Modal } from "ant-design-vue";
 import {
   FullscreenOutlined,
   FullscreenExitOutlined,
+  MehFilled,
+  SmileFilled,
 } from "@ant-design/icons-vue";
 import { useRoute } from "vue-router";
 import { useUserStore } from "@/store/user";
@@ -168,6 +174,7 @@ const userStore = useUserStore();
 const storage_key = (userStore.id + "" + route.query.chapterId) as string;
 const isSubmit = ref(false);
 const isRandom = ref("");
+const isDark = ref(false);
 const isFullScreen = ref(false);
 // 保存当前正在做的题目、以及index，用于保存答案和标记
 const currentSubject = ref<{
@@ -287,7 +294,7 @@ const startTimer = () => {
       `当前章节答题总时长为${totalScore.value}分钟，到时将自动交卷！请注意把握时间！`,
     message: "注意！",
     style: {
-      backgroundColor: "#ddebf6",
+      backgroundColor: isDark.value ? "#585b5d" : "#ddebf6",
     },
     key: "notification",
   });
@@ -305,7 +312,7 @@ const startTimer = () => {
           `${totalSeconds.value - currentSeconds.value}秒后将自动交卷！`,
         message: "注意！",
         style: {
-          backgroundColor: "#ddebf6",
+          backgroundColor: isDark.value ? "#585b5d" : "#ddebf6",
           color: "#a1a4b3",
         },
         key: "handlePage",
@@ -579,6 +586,102 @@ function toggleFullScreen() {
         .disabled {
           cursor: not-allowed;
           color: @assistTextColor;
+        }
+      }
+    }
+  }
+}
+.is-dark {
+  header {
+    background: linear-gradient(180deg, #353536 0%, #393d41 5%, #050506 100%);
+    .info {
+      .time {
+        color: #9c9f09;
+        .hand-in-button {
+          color: rgb(9, 8, 8);
+          background: linear-gradient(180deg, #b3a463 0%, #705428 100%);
+          border: 1px solid #8d3121;
+        }
+      }
+    }
+    :deep(.ant-switch-checked) {
+      background-color: #343536;
+    }
+  }
+  .do-o-topic-main {
+    background-color: #343536;
+    aside {
+      border-right: 1px solid #000;
+      .titles {
+        .titles-type {
+          background: linear-gradient(
+            180deg,
+            #eeeeee 0%,
+            #253b4d 0%,
+            #030709 100%
+          );
+          color: @assistTextColor;
+        }
+        .titles-idx {
+          & > div {
+            background: #272829;
+            color: @assistTextColor;
+            border: 1px solid @assistTextColor;
+            cursor: pointer;
+            & > span {
+              color: #855351;
+            }
+          }
+        }
+      }
+      .explain {
+        color: #885452;
+      }
+    }
+    section {
+      .title-wrapper {
+        color: @assistTextColor;
+        & > p {
+          border-bottom: 1px solid #000;
+          color: @assistTextColor;
+        }
+        & > p:first-child {
+          span {
+            color: @assistTextColor;
+            background: linear-gradient(
+              180deg,
+              #eeeeee 0%,
+              #253b4d 0%,
+              #030709 100%
+            );
+          }
+        }
+      }
+      .controller-bar {
+        color: @assistTextColor;
+        .control-btn {
+          background: linear-gradient(
+            180deg,
+            #353536 0%,
+            #393d41 5%,
+            #050506 100%
+          );
+          border: 1px solid #000;
+        }
+        .disabled {
+          cursor: not-allowed;
+          color: @assistTextColor;
+        }
+        :deep(.ant-checkbox-checked .ant-checkbox-inner) {
+          background-color: #6f7072;
+          border-color: #6f7072;
+        }
+        :deep(.ant-radio-wrapper) {
+          color: @assistTextColor;
+          .ant-radio-inner::after {
+            border-color: #6f7072;
+            background-color: #6f7072;
+          }
         }
       }
     }
