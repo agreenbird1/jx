@@ -52,11 +52,14 @@
         </div>
         <template v-if="isWeChatLogin">
           <div style="text-align: center">
-            <img
-              style="width: 200px; height: 200px"
-              src="../assets/icons/empty.png"
-            />
-            <p class="mt-20">使用微信扫一扫登录"觉晓账号"</p>
+            <iframe
+              sandbox="allow-scripts allow-top-navigation allow-same-origin"
+              :src="wechatUrl"
+              frameborder="0"
+              scrolling="no"
+              width="300px"
+              height="310px"
+            ></iframe>
             <p
               class="mt-20"
               :style="{ cursor: 'pointer', color: '#a1a4b3', marginBottom: 0 }"
@@ -164,6 +167,10 @@ let timer: NodeJS.Timer | null;
 const isLogin = ref(false); // 区分 两个登录面板及逻辑
 const isSendCode = ref(false); // 标识当前是否发送了验证码
 const isWeChatLogin = ref(false);
+const appid = "wx1280daa4951e6a86";
+const wechatUrl = `https://img.juexiaotime.com/userAdmin/wechat_login.html?appid=${appid}&redirect_uri=${encodeURIComponent(
+  location.href
+)}&scope=snsapi_login&state=STATE&isIframe=true`;
 const userStore = useUserStore();
 const phoneReg = /^1[3|5|7|9|8]\d{9}$/;
 const loginForm = ref({
@@ -268,6 +275,15 @@ const searchSubjects = () => {
 };
 // 清除可能遗漏的定时器
 onBeforeUnmount(() => clearInterval(timer as NodeJS.Timer));
+window.addEventListener(
+  "message",
+  (e) => {
+    const { code } = e.data;
+    console.log(code);
+    isLogin.value = false;
+  },
+  false
+);
 </script>
 
 <style scoped lang="less">
