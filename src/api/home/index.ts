@@ -2,6 +2,7 @@ import request from "@/utils/request";
 import { useUserStore } from "@/store/user";
 import pinia from "@/store";
 import { IChapter, IRankItem, IRecord } from "./types";
+import { IChapterSubject } from "..";
 
 export * from "./types";
 
@@ -30,4 +31,10 @@ export const getRecords = (isShowAll = true) => {
  */
 export const getRankList = () => {
   return request.get<IRankItem[]>("/question/userOtopicRecords/top/fifty");
+};
+
+export const getSubjectsAtRandom = (chapterId: string) => {
+  return request.get<IChapterSubject[]>(
+    `/question/otopic/random?uid=${userStore.id}&chapterId=${chapterId}`
+  );
 };
