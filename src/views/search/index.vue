@@ -11,7 +11,14 @@
     </div>
   </template>
   <div v-else class="search mt-20">
-    <main-header title="搜索作答"></main-header>
+    <back-to-top />
+    <main-header
+      :title="
+        '搜索作答 - 共' +
+        searchSubjects.length +
+        `条“${route.query.searchWords}”相关的结果`
+      "
+    ></main-header>
     <DynamicScroller
       :items="searchSubjects"
       :min-item-size="265"

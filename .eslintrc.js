@@ -24,5 +24,6 @@ module.exports = {
     "@typescript-eslint/no-unused-vars": "off",
     "no-undef": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/ban-types": "off",
   },
 };
