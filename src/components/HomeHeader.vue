@@ -42,13 +42,20 @@
 
     <a-modal
       v-model:visible="isLogin"
+      destroy-on-close
       :footer="null"
       :closable="false"
       width="460px"
     >
       <div style="padding: 0 40px">
         <div style="font-size: 24px; margin-bottom: 37px">
-          {{ isWeChatLogin ? "微信登录" : "登录/注册" }}
+          {{
+            isWeChatLogin
+              ? "微信登录"
+              : isRegistered
+              ? "登录/注册"
+              : "绑定手机号"
+          }}
         </div>
         <template v-if="isWeChatLogin">
           <div style="text-align: center">
@@ -135,7 +142,10 @@
               >
             </a-form-item>
           </a-form>
-          <div style="text-align: center; line-height: 24px; font-size: 12px">
+          <div
+            v-show="isRegistered"
+            style="text-align: center; line-height: 24px; font-size: 12px"
+          >
             <span
               style="cursor: pointer; color: #a1a4b3"
               @click="isWeChatLogin = true"
@@ -152,12 +162,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref } from "vue";
+import { computed, nextTick, onBeforeUnmount, ref } from "vue";
 import { SearchOutlined } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 import type { Rule } from "ant-design-vue/es/form";
 import { useUserStore } from "@/store/user";
-import { sendCode, loginByCode as loginByCodeApi } from "@/api";
+import {
+  sendCode,
+  loginByCode as loginByCodeApi,
+  getWxUserInfo,
+  IWxUserInfo,
+} from "@/api";
 import storage from "@/utils/storage";
 import router from "@/router";
 
@@ -167,6 +182,8 @@ let timer: NodeJS.Timer | null;
 const isLogin = ref(false); // 区分 两个登录面板及逻辑
 const isSendCode = ref(false); // 标识当前是否发送了验证码
 const isWeChatLogin = ref(false);
+const isRegistered = ref(true); // 控制是否是微信登陆未注册
+let wxUser: Pick<IWxUserInfo, "avatar" | "openid">;
 const appid = "wx1280daa4951e6a86";
 const wechatUrl = `https://img.juexiaotime.com/userAdmin/wechat_login.html?appid=${appid}&redirect_uri=${encodeURIComponent(
   location.href
@@ -210,7 +227,8 @@ const phoneRules: Rule[] = [
 const loginByCode = async () => {
   const { data } = await loginByCodeApi(
     loginForm.value.phone,
-    loginForm.value.code
+    loginForm.value.code,
+    wxUser
   );
   if (data.code >= 2000 && data.code < 3000) {
     userStore.$patch(data.data);
@@ -219,7 +237,7 @@ const loginByCode = async () => {
     loginForm.value = { phone: "", code: "", isAgree: false };
     message.success("登陆成功！");
   } else {
-    message.error("验证码错误！");
+    message.error(data.msg);
   }
 };
 // 三种状态
@@ -278,9 +296,23 @@ onBeforeUnmount(() => clearInterval(timer as NodeJS.Timer));
 window.addEventListener(
   "message",
   (e) => {
-    const { code } = e.data;
-    console.log(code);
-    isLogin.value = false;
+    const { code, wechatCode } = e.data;
+    if (wechatCode) {
+      getWxUserInfo(code).then((res) => {
+        const { avatar, openid, id, nickname, phone } = res.data.data;
+        if (res.data.code === 5010) {
+          message.warning("扫码成功！请绑定手机号后登录！");
+          isWeChatLogin.value = false;
+          isRegistered.value = false;
+          wxUser = { avatar, openid };
+        } else {
+          isLogin.value = false;
+          message.success("微信登陆成功！");
+          userStore.$patch({ avatar, id, nickname, phone });
+          storage.setStorage("user", { avatar, id, nickname, phone });
+        }
+      });
+    }
   },
   false
 );
