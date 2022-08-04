@@ -10,6 +10,7 @@ export const useUserStore = defineStore({
         id: 0,
         nickname: "",
         avatar: "",
+        phone: "",
       }
     );
   },
