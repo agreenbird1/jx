@@ -26,7 +26,7 @@
         <div class="time">
           <span
             style="color: #fff; cursor: pointer; margin-right: 20px"
-            @click="toggleFullScreen"
+            @click="toggleFullScreen(!isFullScreen)"
           >
             <component
               :is="isFullScreen ? FullscreenExitOutlined : FullscreenOutlined"
@@ -148,7 +148,7 @@
 
 <script setup lang="ts">
 import { computed, createVNode, onBeforeUnmount, ref } from "vue";
-import { notification, Modal } from "ant-design-vue";
+import { notification, Modal, ModalFuncProps } from "ant-design-vue";
 import {
   FullscreenOutlined,
   FullscreenExitOutlined,
@@ -167,6 +167,7 @@ import {
 import storage from "@/utils/storage";
 import { submitChapter } from "@/api";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
+import useFullScreen from "@/hooks/useFullScreen";
 import router from "@/router";
 
 const route = useRoute();
@@ -175,7 +176,7 @@ const storage_key = (userStore.id + "" + route.query.chapterId) as string;
 const isSubmit = ref(false);
 const isRandom = ref("");
 const isDark = ref(false);
-const isFullScreen = ref(false);
+const { isFullScreen, toggleFullScreen } = useFullScreen();
 // 保存当前正在做的题目、以及index，用于保存答案和标记
 const currentSubject = ref<{
   idx: number;
@@ -231,6 +232,7 @@ const currentTimes = computed(() => {
     seconds: s < 10 ? "0" + s : s,
   };
 });
+let stayTime = 0;
 // 计时控制
 let timer: NodeJS.Timer | null = null;
 // 按钮跳转、点击跳转
@@ -251,7 +253,7 @@ const sendChapter = () => {
     userOtopicRecords.push({
       uid: userStore.id,
       oid: subjects![idx].id,
-      chapterId: chapter.value!.chapterId,
+      chapterId: chapter.value!.otopicFrontVos[idx].chapterId,
       selectAnswer:
         typeof answer === "string" ? answer : answer.sort().join(","),
       otopicScore: subjects![idx].score,
@@ -294,7 +296,7 @@ const startTimer = () => {
       `当前章节答题总时长为${totalScore.value}分钟，到时将自动交卷！请注意把握时间！`,
     message: "注意！",
     style: {
-      backgroundColor: isDark.value ? "#585b5d" : "#ddebf6",
+      backgroundColor: "#ddebf6",
     },
     key: "notification",
   });
@@ -312,12 +314,12 @@ const startTimer = () => {
           `${totalSeconds.value - currentSeconds.value}秒后将自动交卷！`,
         message: "注意！",
         style: {
-          backgroundColor: isDark.value ? "#585b5d" : "#ddebf6",
-          color: "#a1a4b3",
+          backgroundColor: "#ddebf6",
         },
         key: "handlePage",
       });
     }
+    stayTime++;
   }, 1000);
 };
 const initSubjects = (data: IChapterSubject[]) => {
@@ -369,6 +371,7 @@ const initSubjects = (data: IChapterSubject[]) => {
         startTimer();
       },
       onCancel() {
+        storage.deleteSession(storage_key);
         startTimer();
       },
     });
@@ -384,7 +387,6 @@ if (!route.query.isRandom) {
     initSubjects(res.data.data);
   });
 }
-// 初始化获取数据
 
 // 刷新！离开当前页所作处理
 const handleClosePage = () => {
@@ -395,29 +397,23 @@ const handleClosePage = () => {
       answers: answers.value,
     });
   }
-  if (isFullScreen.value && document.exitFullscreen) {
-    document.exitFullscreen();
-    isFullScreen.value = false;
-  }
+  // 可能存在未点击确定退出的情况
+  Modal.destroyAll();
+  toggleFullScreen(false);
   clearInterval(timer as NodeJS.Timer);
   // 清除遗留的提醒框
   notification.close("notification");
   notification.close("handlePage");
 };
-onBeforeUnmount(handleClosePage);
+onBeforeUnmount(() => {
+  handleClosePage();
+  console.log(stayTime);
+});
 // 页面刷新需要刷新
-window.onbeforeunload = handleClosePage;
-function toggleFullScreen() {
-  if (!document.fullscreenElement) {
-    isFullScreen.value = true;
-    document.documentElement.requestFullscreen();
-  } else {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-      isFullScreen.value = false;
-    }
-  }
-}
+window.onbeforeunload = () => {
+  console.log(stayTime);
+  handleClosePage();
+};
 </script>
 
 <style scoped lang="less">
