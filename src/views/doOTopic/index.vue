@@ -26,7 +26,7 @@
         <div class="time">
           <span
             style="color: #fff; cursor: pointer; margin-right: 20px"
-            @click="toggleFullScreen(!isFullScreen)"
+            @click="toggleFullScreen()"
           >
             <component
               :is="isFullScreen ? FullscreenExitOutlined : FullscreenOutlined"
@@ -399,7 +399,7 @@ const handleClosePage = () => {
   }
   // 可能存在未点击确定退出的情况
   Modal.destroyAll();
-  toggleFullScreen(false);
+  toggleFullScreen();
   clearInterval(timer as NodeJS.Timer);
   // 清除遗留的提醒框
   notification.close("notification");
