@@ -1,21 +1,22 @@
 import { ref } from "vue";
 
 const useFullScreen = () => {
-  const isFullScreen = ref(false);
-  function toggleFullScreen(open: boolean) {
-    if (open) {
-      if (!document.fullscreenElement) {
-        isFullScreen.value = true;
-        document.documentElement.requestFullscreen();
-      }
+  const isFullScreen = ref();
+  function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+      isFullScreen.value = true;
+      document.documentElement.requestFullscreen();
     } else {
-      if (document.exitFullscreen && isFullScreen.value) {
+      if (document.exitFullscreen) {
         document.exitFullscreen();
         isFullScreen.value = false;
       }
+
+      document.addEventListener("fullscreenchange", (e) => {
+        isFullScreen.value = !isFullScreen.value;
+      });
     }
   }
-
   return {
     isFullScreen,
     toggleFullScreen,
