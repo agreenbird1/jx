@@ -13,6 +13,7 @@ export interface IChapterSubjectDetails {
   title: string;
   topicNumber: number;
   type: 1 | 2 | 3;
+  chapterId: number;
 }
 
 export interface ISubmitSubject {
