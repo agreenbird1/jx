@@ -103,7 +103,7 @@
               <span>{{ rankItem.doQuestionNum }}</span>
             </div>
           </div>
-          <div class="rank-end">- 排名仅展示前50名 -</div>
+          <div class="rank-end">- 排名仅展示本周前50名 -</div>
         </template>
         <template v-else>
           <div class="rank-empty">
