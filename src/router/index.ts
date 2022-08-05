@@ -41,6 +41,11 @@ const router = createRouter({
       name: "doOTopic",
       component: () => import("@/views/doOTopic/index.vue"),
     },
+    {
+      path: "/:pathMatch(.*)",
+      name: "404",
+      redirect: "/",
+    },
   ],
   scrollBehavior() {
     scrollTo(0);
