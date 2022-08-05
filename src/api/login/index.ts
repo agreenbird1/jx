@@ -29,5 +29,7 @@ export const loginByCode = (
  * @returns 微信用户信息
  */
 export const getWxUserInfo = (code: string) => {
-  return request.get<IWxUserInfo>(`/auth/weiXin/login?code=${code}`);
+  return request.get<IWxUserInfo>(
+    `/auth/weiXin/login?code=${code}&loginType=0`
+  );
 };
