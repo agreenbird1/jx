@@ -32,6 +32,11 @@
             @click="scrollToTitle(idx + typeItems.start)"
           >
             {{ idx + 1 + typeItems.start }}
+            <img
+              v-if="idxItem.isMark"
+              src="@/assets/icons/mark.png"
+              class="mark"
+            />
           </span>
         </div>
       </div>
@@ -103,6 +108,7 @@ aside {
         background-color: #eeeef4;
       }
       span {
+        position: relative;
         display: inline-block;
         line-height: 39px;
         text-align: center;
@@ -112,6 +118,11 @@ aside {
         margin-right: 25px;
         margin-bottom: 20px;
         cursor: pointer;
+        .mark {
+          position: absolute;
+          top: -2px;
+          right: -12px;
+        }
       }
       & span:nth-child(5n) {
         margin-right: 0;
