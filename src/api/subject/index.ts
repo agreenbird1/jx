@@ -22,7 +22,7 @@ export interface ISubmitSubject {
   chapterId: number;
   selectAnswer: string;
   otopicScore: number;
-  isMark: 1 | 0;
+  isMark?: 1 | 0;
 }
 /**
  * 根据章节id查询章节下的题目信息
