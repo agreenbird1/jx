@@ -29,6 +29,9 @@
                 <a-menu-item @click="logout">
                   <a href="javascript:;">退出登录</a>
                 </a-menu-item>
+                <a-menu-item>
+                  <router-link to="/studyCalendar">学习日历</router-link>
+                </a-menu-item>
               </a-menu>
             </template>
           </a-dropdown>
@@ -162,19 +165,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, ref } from "vue";
+import { computed, onBeforeUnmount, ref } from "vue";
 import { SearchOutlined } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 import type { Rule } from "ant-design-vue/es/form";
 import { useUserStore } from "@/store/user";
-import {
-  sendCode,
-  loginByCode as loginByCodeApi,
-  getWxUserInfo,
-  IWxUserInfo,
-} from "@/api";
 import storage from "@/utils/storage";
 import router from "@/router";
+import {
+  sendCode,
+  getWxUserInfo,
+  loginByCode as loginByCodeApi,
+} from "@/api/login";
+import type { IWxUserInfo } from "@/api/login/types";
 
 const searchWords = ref(""); // 搜索框内容
 let Countdown = ref(60);

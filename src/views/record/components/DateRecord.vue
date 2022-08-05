@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { IRecord } from "@/api";
+import type { IRecord } from "@/api/home/types";
 
 interface IDateRecord {
   date: string;

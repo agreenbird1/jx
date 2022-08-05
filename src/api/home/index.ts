@@ -2,7 +2,7 @@ import request from "@/utils/request";
 import { useUserStore } from "@/store/user";
 import pinia from "@/store";
 import { IChapter, IRankItem, IRecord } from "./types";
-import { IChapterSubject } from "..";
+import { IChapterSubject } from "../subject/types";
 
 export * from "./types";
 

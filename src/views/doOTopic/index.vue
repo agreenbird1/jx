@@ -157,18 +157,17 @@ import {
 } from "@ant-design/icons-vue";
 import { useRoute } from "vue-router";
 import { useUserStore } from "@/store/user";
-import {
-  getSubjectsAtRandom,
-  getSubjectsByChapterId,
-  IChapterSubject,
-  IChapterSubjectDetails,
-  ISubmitSubject,
-} from "@/api";
 import storage from "@/utils/storage";
-import { submitChapter } from "@/api";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 import useFullScreen from "@/hooks/useFullScreen";
 import router from "@/router";
+import { getSubjectsAtRandom } from "@/api/home";
+import { submitChapter, getSubjectsByChapterId } from "@/api/subject";
+import type {
+  IChapterSubjectDetails,
+  IChapterSubject,
+  ISubmitSubject,
+} from "@/api/subject/types";
 
 const route = useRoute();
 const userStore = useUserStore();

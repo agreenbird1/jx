@@ -111,11 +111,12 @@
 </template>
 
 <script setup lang="ts">
-import { getResolvesById, IResolveData, IResolveItem } from "@/api";
 import { computed, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import scrollTo from "@/utils/scrollTo";
 import ResolveTitlesBar from "./components/ResolveTitlesBar.vue";
+import type { IResolveData, IResolveItem } from "@/api/resolve/types";
+import { getResolvesById } from "@/api/resolve";
 
 const route = useRoute();
 const resolveData = ref<IResolveData>();

@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { IResolveData, IResolveItem } from "@/api";
+import { IResolveData, IResolveItem } from "@/api/resolve/types";
 
 defineProps<{
   resolveData: IResolveData;

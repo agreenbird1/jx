@@ -119,16 +119,10 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { RightOutlined } from "@ant-design/icons-vue";
-import {
-  getAllSubjects,
-  IChapter,
-  getRecords,
-  IRecord,
-  getRankList,
-  IRankItem,
-} from "@/api";
 import HomeSkeleton from "./components/HomeSkeleton.vue";
 import { useUserStore } from "@/store/user";
+import { getAllSubjects, getRecords, getRankList } from "@/api/home";
+import type { IRecord, IChapter, IRankItem } from "@/api/home";
 
 const userStore = useUserStore();
 const records = ref<IRecord[]>();

@@ -13,8 +13,9 @@
 </template>
 
 <script setup lang="ts">
+import { getRecords } from "@/api/home";
+import type { IRecord } from "@/api/home";
 import { ref } from "vue";
-import { getRecords, IRecord } from "@/api";
 import DateRecord from "./components/DateRecord.vue";
 
 interface IDateRecord {

@@ -96,11 +96,8 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ISearchSubject,
-  searchSubjectByKeyWords,
-  searchSubjectResult,
-} from "@/api";
+import { searchSubjectByKeyWords, searchSubjectResult } from "@/api/search";
+import type { ISearchSubject } from "@/api/search/types";
 import { useUserStore } from "@/store/user";
 import { message } from "ant-design-vue";
 import { ref, watch } from "vue";
