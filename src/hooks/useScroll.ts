@@ -12,17 +12,17 @@ const useScroll = (
 ) => {
   const top = ref(0);
   const left = ref(0);
+  const { onScroll, throttleTime = 100 } = options;
   element ??= document.querySelector("#app") as HTMLElement;
   element.addEventListener(
     "scroll",
     throttle<(e: Event) => void>((e: Event) => {
       const target = e.target as HTMLElement;
-      const { onScroll } = options;
       top.value = target.scrollTop;
       left.value = target.scrollLeft;
       // 触发滚动回调，如果有的话
       onScroll && onScroll(e);
-    }, 100)
+    }, throttleTime)
   );
   return {
     top,
