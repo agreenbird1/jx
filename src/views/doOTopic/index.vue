@@ -254,6 +254,7 @@ const sendChapter = () => {
       uid: userStore.id,
       oid: subjects![idx].id,
       chapterId: chapter.value!.otopicFrontVos[idx].chapterId,
+      isMark: marks.value![idx] ? 1 : 0,
       selectAnswer:
         typeof answer === "string" ? answer : answer.sort().join(","),
       otopicScore: subjects![idx].score,
@@ -399,7 +400,8 @@ const handleClosePage = () => {
   }
   // 可能存在未点击确定退出的情况
   Modal.destroyAll();
-  toggleFullScreen();
+  // 退出做题界面时退出全屏
+  isFullScreen.value && toggleFullScreen();
   clearInterval(timer as NodeJS.Timer);
   // 清除遗留的提醒框
   notification.close("notification");
