@@ -21,6 +21,7 @@ export interface IResolveItem {
   topicNumber: number;
   type: number;
   optionSelectVos: IOptionRate[];
+  isMark: 1 | 0;
 }
 
 export interface IOptionRate {
