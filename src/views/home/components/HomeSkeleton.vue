@@ -1,14 +1,14 @@
 <template>
   <div class="home-skeleton">
-    <h6><skeleton class="mt-20" width="60px" height="24px" /></h6>
+    <h6><aft-skeleton class="mt-20" width="60px" height="24px" /></h6>
     <div>
-      <skeleton class="mt-20" width="500px" height="24px" />
+      <aft-skeleton class="mt-20" width="500px" height="24px" />
     </div>
     <div>
-      <skeleton class="mt-20" width="240px" height="44px" />
+      <aft-skeleton class="mt-20" width="240px" height="44px" />
     </div>
     <div class="main">
-      <skeleton
+      <aft-skeleton
         v-for="i in 9"
         :key="i"
         class="mt-20 mr-20"
@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { Skeleton } from "@juexiao/juexiao-AFanTi-UI";
+import { AftSkeleton } from "@juexiao/juexiao-AFanTi-UI";
 </script>
 
 <style scoped lang="less">
