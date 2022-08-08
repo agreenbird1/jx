@@ -15,7 +15,11 @@
       v-for="(typeItems, typeIdx) in typeResolveData"
       :key="typeItems.name"
     >
-      <div v-if="typeItems.resolveItems.length" class="type-scores">
+      <div
+        v-if="typeItems.resolveItems.length"
+        class="type-scores"
+        @click="scrollToTitle"
+      >
         <p>{{ typeItems.name }}</p>
         <div class="idx-list">
           <span
@@ -29,7 +33,7 @@
                 : 'unanswered'
             "
             :style="{ borderRadius: typeIdx > 0 ? '5px' : '20px' }"
-            @click="scrollToTitle(idx + typeItems.start)"
+            :data-idx="idx + typeItems.start"
           >
             {{ idx + 1 + typeItems.start }}
             <img
@@ -57,7 +61,10 @@ defineProps<{
   }[];
 }>();
 const emits = defineEmits(["scrollToTitle"]);
-const scrollToTitle = (idx: number) => emits("scrollToTitle", idx);
+const scrollToTitle = (e: Event) => {
+  const idx = (e.target as HTMLElement).dataset.idx;
+  idx && emits("scrollToTitle", +idx);
+};
 </script>
 
 <style scoped lang="less">
