@@ -8,7 +8,7 @@
         : '题目加载中...'
     "
   />
-  <div v-else class="do-o-topic" :class="isDark ? 'is-dark' : ''">
+  <div v-else class="do-o-topic">
     <header class="flex-bt">
       <div class="user pl-20">
         <img :src="userStore.avatar" />
@@ -164,6 +164,7 @@ import { useUserStore } from "@/store/user";
 import storage from "@/utils/storage";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 import useFullScreen from "@/hooks/useFullScreen";
+import useDark from "@/hooks/useDark";
 import router from "@/router";
 import { getSubjectsAtRandom } from "@/api/home";
 import { submitChapter, getSubjectsByChapterId } from "@/api/subject";
@@ -178,7 +179,7 @@ const userStore = useUserStore();
 const storage_key = (userStore.id + "" + route.query.chapterId) as string;
 const isSubmit = ref(false);
 const isRandom = ref("");
-const isDark = ref(false);
+const { isDark } = useDark();
 const { isFullScreen, toggleFullScreen } = useFullScreen();
 // 保存当前正在做的题目、以及index，用于保存答案和标记
 const currentSubject = ref<{
@@ -308,7 +309,9 @@ const startTimer = () => {
   notification.info({
     duration: null,
     description: () =>
-      `当前章节答题总时长为${totalScore.value}分钟，到时将自动交卷！请注意把握时间！`,
+      `当前章节答题总时长为${
+        totalSeconds.value / 60
+      }分钟，到时将自动交卷！请注意把握时间！`,
     message: "注意！",
     style: {
       backgroundColor: "#ddebf6",
@@ -366,7 +369,11 @@ const initSubjects = (data: IChapterSubject[]) => {
   totalScore.value =
     subjectTypeNumber.value[0].count +
     2 * (subjectTypeNumber.value[1].count + subjectTypeNumber.value[2].count);
-  totalSeconds.value = totalScore.value * 60; // 单位：s
+  totalSeconds.value =
+    (subjectTypeNumber.value[0].count +
+      3 *
+        (subjectTypeNumber.value[1].count + subjectTypeNumber.value[2].count)) *
+    60; // 单位：s
   const previous = storage.getSession<{
     time: number;
     marks: boolean[];
@@ -443,12 +450,12 @@ window.onbeforeunload = () => {
   transition: all 0.5s ease-in;
   header {
     height: 70px;
-    background: linear-gradient(180deg, #a9d9f7 0%, #77bafd 5%, #70b2ed 100%);
+    background: var(--aft-do-header-bgcolor);
     .user {
       display: flex;
       align-items: center;
       width: 250px;
-      color: #fff;
+      color: var(--aft-do-info-color);
       img {
         width: 48px;
         margin-right: 10px;
@@ -457,9 +464,9 @@ window.onbeforeunload = () => {
     .info {
       padding: 0 10px;
       width: calc(100% - 250px);
-      color: #fff;
+      color: var(--aft-do-info-color);
       .time {
-        color: #fafe0d;
+        color: var(--aft-do-time-color);
         .hand-in-button {
           display: inline-block;
           width: 53px;
@@ -467,9 +474,9 @@ window.onbeforeunload = () => {
           line-height: 20px;
           text-align: center;
           margin: 0 20px;
-          background: linear-gradient(180deg, #f8e699 0%, #f8ac30 100%);
-          border: 1px solid #ea5e45;
-          color: #000;
+          background: var(--aft-do-hand-in-bgcolor);
+          border: 1px solid var(--aft-do-hand-in-bdcolor);
+          color: var(--aft-do-hand-in-color);
           cursor: pointer;
         }
       }
@@ -478,7 +485,7 @@ window.onbeforeunload = () => {
   .do-o-topic-main {
     display: flex;
     height: calc(100% - 70px);
-    background-color: #ddebf6;
+    background-color: var(--aft-do-main-bgcolor);
     ::-webkit-scrollbar {
       width: 2px; /* 纵向滚动条*/
       height: 6px; /* 横向滚动条 */
@@ -487,45 +494,41 @@ window.onbeforeunload = () => {
     aside {
       height: 100%;
       width: 252px;
-      border-right: 1px solid #2b84cf;
+      border-right: 1px solid var(--aft-do-aside-bdcolor);
       overflow-y: auto;
       .titles {
         .titles-type {
           padding-left: 10px;
           font-size: 16px;
-          color: #000;
+          color: var(--aft-do-aside-title-color);
           line-height: 30px;
-          background: linear-gradient(
-            180deg,
-            #eeeeee 0%,
-            #7abbf3 0%,
-            #4b8fc5 100%
-          );
+          background: var(--aft-do-aside-title-bgcolor);
         }
         .titles-idx {
           display: flex;
           flex-wrap: wrap;
-          text-decoration: underline;
           & > div {
             width: 31px;
             height: 31px;
             text-align: center;
+            // 下划线的颜色是与文字颜色一致，但需要设置到同一处
+            text-decoration: underline;
             line-height: 30px;
-            background: #ddebf6;
-            color: #3937fe;
-            border: 1px solid #ffffff;
+            background: var(--aft-do-aside-item-bgcolor);
+            color: var(--aft-do-aside-item-color);
+            border: 1px solid var(--aft-do-aside-item-bdcolor);
             cursor: pointer;
             & > span {
-              color: #f5312b;
+              color: var(--aft-do-aside-mark-bdcolor);
             }
           }
           .answered {
-            color: #567722;
+            color: var(--aft-do-aside-answered-bdcolor);
           }
         }
       }
       .explain {
-        color: #f5312b;
+        color: var(--aft-do-aside-explain-bdcolor);
         padding: 7px;
         font-size: 12px;
       }
@@ -536,11 +539,11 @@ window.onbeforeunload = () => {
       padding: 20px;
       .title-wrapper {
         height: calc(100% - 80px);
+        color: var(--aft-do-main-title-color);
         & > p {
           margin: 0;
-          border-bottom: 1px solid #2b84cf;
+          border-bottom: 1px solid var(--aft-do-main-titlewp-bdcolor);
           font-size: 13px;
-          color: #1c1e23;
         }
         & > p:first-child {
           span {
@@ -551,12 +554,7 @@ window.onbeforeunload = () => {
             text-align: center;
             font-size: 14px;
             font-weight: 600;
-            background: linear-gradient(
-              180deg,
-              #eeeeee 0%,
-              #7abbf3 0%,
-              #4b8fc5 100%
-            );
+            background: var(--aft-do-main-title-bgcolor);
             border-radius: 3px 3px 0px 0px;
           }
         }
@@ -586,114 +584,23 @@ window.onbeforeunload = () => {
         align-items: center;
         font-size: 14px;
         height: 80px;
+        span {
+          color: var(--aft-do-main-btn-color);
+        }
+
         .control-btn {
           width: 56px;
           height: 20px;
           text-align: center;
+          color: var(--aft-do-main-btn-color);
           line-height: 20px;
-          background: linear-gradient(180deg, #ffffff 0%, #abc6ed 100%);
-          border: 1px solid #9cafee;
+          background: var(--aft-do-main-btn-bgcolor);
+          border: 1px solid var(--aft-do-main-btn-bdcolor);
           cursor: pointer;
         }
         .disabled {
           cursor: not-allowed;
           color: @assistTextColor;
-        }
-      }
-    }
-  }
-}
-.is-dark {
-  header {
-    background: linear-gradient(180deg, #353536 0%, #393d41 5%, #050506 100%);
-    .info {
-      .time {
-        color: #9c9f09;
-        .hand-in-button {
-          color: rgb(9, 8, 8);
-          background: linear-gradient(180deg, #b3a463 0%, #705428 100%);
-          border: 1px solid #8d3121;
-        }
-      }
-    }
-    :deep(.ant-switch-checked) {
-      background-color: #343536;
-    }
-  }
-  .do-o-topic-main {
-    background-color: #343536;
-    aside {
-      border-right: 1px solid #000;
-      .titles {
-        .titles-type {
-          background: linear-gradient(
-            180deg,
-            #eeeeee 0%,
-            #253b4d 0%,
-            #030709 100%
-          );
-          color: @assistTextColor;
-        }
-        .titles-idx {
-          & > div {
-            background: #272829;
-            color: @assistTextColor;
-            border: 1px solid @assistTextColor;
-            cursor: pointer;
-            & > span {
-              color: #855351;
-            }
-          }
-        }
-      }
-      .explain {
-        color: #885452;
-      }
-    }
-    section {
-      .title-wrapper {
-        color: @assistTextColor;
-        & > p {
-          border-bottom: 1px solid #000;
-          color: @assistTextColor;
-        }
-        & > p:first-child {
-          span {
-            color: @assistTextColor;
-            background: linear-gradient(
-              180deg,
-              #eeeeee 0%,
-              #253b4d 0%,
-              #030709 100%
-            );
-          }
-        }
-      }
-      .controller-bar {
-        color: @assistTextColor;
-        .control-btn {
-          background: linear-gradient(
-            180deg,
-            #353536 0%,
-            #393d41 5%,
-            #050506 100%
-          );
-          border: 1px solid #000;
-        }
-        .disabled {
-          cursor: not-allowed;
-          color: @assistTextColor;
-        }
-        :deep(.ant-checkbox-checked .ant-checkbox-inner) {
-          background-color: #6f7072;
-          border-color: #6f7072;
-        }
-        :deep(.ant-radio-wrapper) {
-          color: @assistTextColor;
-          .ant-radio-inner::after {
-            border-color: #6f7072;
-            background-color: #6f7072;
-          }
         }
       }
     }

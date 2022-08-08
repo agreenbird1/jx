@@ -3,6 +3,7 @@ import store from "./store";
 import App from "./App.vue";
 import router from "./router/index";
 import "@/assets/styles/normalize.less";
+import "@/assets/styles/theme-dark.less";
 import "ant-design-vue/dist/antd.css";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
 import VueVirtualScroller from "vue-virtual-scroller";

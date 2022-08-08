@@ -1,0 +1,93 @@
+// bgcolor background-color
+// bdcolor border-color
+// xxwp xx的容器 wrapper
+
+[data-theme="dark"] {
+  // 头部
+  --aft-do-header-bgcolor: linear-gradient(
+    180deg,
+    #353536 0%,
+    #393d41 5%,
+    #050506 100%
+  );
+  --aft-do-info-color: #fff;
+  --aft-do-time-color: #9c9f09;
+  --aft-do-hand-in-color: rgb(9, 8, 8);
+  --aft-do-hand-in-bdcolor: #8d3121;
+  --aft-do-hand-in-bgcolor: linear-gradient(180deg, #b3a463 0%, #705428 100%);
+
+  // main
+  --aft-do-main-bgcolor: #343536;
+
+  // aside
+  --aft-do-aside-bdcolor: #a1a4b3;
+  --aft-do-aside-title-bgcolor: linear-gradient(
+    180deg,
+    #eeeeee 0%,
+    #253b4d 0%,
+    #030709 100%
+  );
+  --aft-do-aside-title-color: #a1a4b3;
+  --aft-do-aside-item-color: #a1a4b3;
+  --aft-do-aside-item-bgcolor: #272829;
+  --aft-do-aside-item-bdcolor: #a1a4b3;
+  --aft-do-aside-mark-bdcolor: #855351;
+  --aft-do-aside-answered-bdcolor: #74a02f;
+  --aft-do-aside-explain-bdcolor: #855351;
+
+  // 做题 section
+  --aft-do-main-titlewp-bdcolor: #000;
+  --aft-do-main-title-color: #a1a4b3;
+  --aft-do-main-title-bgcolor: linear-gradient(
+    180deg,
+    #eeeeee 0%,
+    #253b4d 0%,
+    #030709 100%
+  );
+  --aft-do-main-btn-bgcolor: linear-gradient(
+    180deg,
+    #353536 0%,
+    #393d41 5%,
+    #050506 100%
+  );
+  --aft-do-main-btn-bdcolor: #000;
+  --aft-do-main-btn-color: #a1a4b3;
+}
+
+// ant-design 样式，无法使用 css variables 控制
+.dark {
+  .ant-checkbox-wrapper {
+    color: #a1a4b3;
+  }
+  .ant-switch-checked {
+    background-color: #050506;
+  }
+  .ant-checkbox-wrapper-checked .ant-checkbox-inner {
+    background-color: #a1a4b3;
+    border-color: #a1a4b3;
+  }
+
+  .ant-radio-wrapper {
+    color: #a1a4b3;
+  }
+  .ant-radio-checked .ant-radio-inner {
+    border-color: #a1a4b3;
+  }
+  .ant-radio-checked .ant-radio-inner::after {
+    background-color: #a1a4b3;
+  }
+  .ant-modal-body {
+    background-color: #3e3f41;
+    .ant-modal-confirm-body .ant-modal-confirm-title,
+    .ant-modal-confirm-body .ant-modal-confirm-content {
+      color: #a1a4b3;
+    }
+  }
+  .ant-notification-notice {
+    background-color: #3e3f41 !important;
+    color: #a1a4b3;
+  }
+  .ant-notification-notice-message {
+    color: #a1a4b3;
+  }
+}
