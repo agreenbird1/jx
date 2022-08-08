@@ -192,7 +192,7 @@ const wechatUrl = `https://img.juexiaotime.com/userAdmin/wechat_login.html?appid
   location.href
 )}&scope=snsapi_login&state=STATE&isIframe=true`;
 const userStore = useUserStore();
-const phoneReg = /^1[3|5|7|9|8]\d{9}$/;
+const phoneReg = /^1[3-9]\d{9}$/;
 const loginForm = ref({
   phone: "",
   code: "",
