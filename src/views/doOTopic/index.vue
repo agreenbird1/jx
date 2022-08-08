@@ -49,14 +49,16 @@
           class="titles"
         >
           <div class="titles-type">{{ title.name }}</div>
-          <div class="titles-idx">
+          <div class="titles-idx" @click="changeSubject">
             <div
               v-for="i in title.count"
               :key="i"
-              @click="changeSubject(i + title.start - 1)"
+              :data-idx="i + title.start - 1"
             >
               {{ i + title.start
-              }}<span :class="{ answered: answers[i - 1 + title.start].length }"
+              }}<span
+                :class="{ answered: answers[i - 1 + title.start].length }"
+                :data-idx="i + title.start - 1"
                 >{{
                   marks![i - 1 + title.start]
                     ? "?"
@@ -78,7 +80,7 @@
       <section>
         <div class="title-wrapper">
           <p><span>试卷</span></p>
-          <p class="type-title">{{ subjectType }}共{{ totalScore }}分。</p>
+          <p class="type-title">{{ subjectType }}</p>
           <div class="title-detail">
             <p>第{{ currentSubject?.idx + 1 }}题、</p>
             <div class="resolve">
@@ -107,10 +109,11 @@
           <span
             class="control-btn"
             :class="{ disabled: currentSubject?.idx === 0 }"
-            @click="changeSubject(currentSubject?.idx! - 1)"
+            :data-idx="currentSubject?.idx! - 1"
+            @click="changeSubject"
             >上一题</span
           >
-          <span class="ml-20 mr-20">第1题</span>
+          <span class="ml-20 mr-20">第{{ currentSubject?.idx! + 1 }}题</span>
           <template v-if="currentSubject?.idx! >= subjectTypeNumber[0].count">
             <a-checkbox-group v-model:value="answers[currentSubject?.idx!]">
               <a-checkbox value="A">A</a-checkbox>
@@ -137,7 +140,8 @@
               disabled:
                 currentSubject?.idx === chapter!.otopicFrontVos.length - 1,
             }"
-            @click="changeSubject(currentSubject?.idx! + 1)"
+            :data-idx="currentSubject?.idx! + 1"
+            @click="changeSubject"
             >下一题</span
           >
         </div>
@@ -148,7 +152,7 @@
 
 <script setup lang="ts">
 import { computed, createVNode, onBeforeUnmount, ref } from "vue";
-import { notification, Modal, ModalFuncProps } from "ant-design-vue";
+import { notification, Modal } from "ant-design-vue";
 import {
   FullscreenOutlined,
   FullscreenExitOutlined,
@@ -206,14 +210,18 @@ const subjectTypeNumber = ref([
 // type类型的不同返回，用于大标题显示
 const subjectType = computed(() => {
   if (currentSubject.value!.idx < subjectTypeNumber.value[0].count) {
-    return "一、单选题。每题所设选项中只有一个正确答案，多选、错选活不选均不得分。每题1分，";
+    return `一、单选题。每题所设选项中只有一个正确答案，多选、错选活不选均不得分。每题1分，共${subjectTypeNumber.value[0].count}分`;
   } else if (
     currentSubject.value!.idx <
     subjectTypeNumber.value[1].count + subjectTypeNumber.value[1].start
   )
-    return "二、多选题。每题所设选项中有多个正确答案，多选、错选活不选均不得分。每题2分，";
+    return `二、多选题。每题所设选项中有多个正确答案，多选、错选活不选均不得分。每题2分，共${
+      subjectTypeNumber.value[1].count * 2
+    }分`;
   else
-    return "三、不定项。每题所设选项中有一个或多个正确答案，多选、错选活不选均不得分。每题2分，";
+    return `三、不定项。每题所设选项中有一个或多个正确答案，多选、错选活不选均不得分。每题2分，共${
+      subjectTypeNumber.value[2].count * 2
+    }分`;
 });
 // 总分
 const totalScore = ref(0);
@@ -235,10 +243,17 @@ let stayTime = 0;
 // 计时控制
 let timer: NodeJS.Timer | null = null;
 // 按钮跳转、点击跳转
-const changeSubject = (idx: number) => {
-  if (idx >= 0 && idx < chapter.value!.otopicFrontVos.length) {
-    currentSubject.value!.body = chapter.value!.otopicFrontVos[idx];
-    currentSubject.value!.idx = idx;
+// const changeSubject = (idx: number) => {
+//   if (idx >= 0 && idx < chapter.value!.otopicFrontVos.length) {
+//     currentSubject.value!.body = chapter.value!.otopicFrontVos[idx];
+//     currentSubject.value!.idx = idx;
+//   }
+// };
+const changeSubject = (e: Event) => {
+  const idx = (e.target as HTMLDivElement).dataset.idx;
+  if (idx && +idx >= 0 && +idx < chapter.value!.otopicFrontVos.length) {
+    currentSubject.value!.body = chapter.value!.otopicFrontVos[+idx];
+    currentSubject.value!.idx = +idx;
   }
 };
 const sendChapter = () => {
