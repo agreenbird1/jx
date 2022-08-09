@@ -68,7 +68,13 @@
               </a-row>
             </a-checkbox-group>
             <div v-if="!item.isSubmit" class="confirm">
-              <span @click="submitSubject(item)">确认作答</span>
+              <span
+                :style="{
+                  backgroundColor: item.answer ? '#4379ff' : '#ddd',
+                }"
+                @click="submitSubject(item)"
+                >确认作答</span
+              >
             </div>
             <div v-else class="resolve mt-20">
               <div class="correct mb-20">
@@ -198,7 +204,6 @@ watch(
         height: 20px;
         text-align: center;
         line-height: 20px;
-        background-color: @jxColor;
         border-radius: 5px;
         cursor: pointer;
       }
