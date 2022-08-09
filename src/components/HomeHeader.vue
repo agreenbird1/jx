@@ -138,7 +138,7 @@
             </a-form-item>
             <a-form-item>
               <a-button
-                type="primary"
+                :type="isQualify ? 'primary' : 'ghost'"
                 style="width: 327px; height: 44px; border-radius: 22px"
                 html-type="submit"
                 >即刻登录</a-button
@@ -198,6 +198,15 @@ const loginForm = ref({
   code: "",
   isAgree: false,
 });
+// 登录按钮颜色控制，未全部填写时置灰
+const isQualify = computed(() => {
+  return (
+    phoneReg.test(loginForm.value.phone) &&
+    loginForm.value.code.length === 6 &&
+    loginForm.value.isAgree
+  );
+});
+
 const agreeValidator = (_rule: Rule, value: boolean) => {
   if (!value) return Promise.reject("请勾选用户协议!");
   return Promise.resolve();
