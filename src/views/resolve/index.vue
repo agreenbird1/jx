@@ -84,7 +84,7 @@
                     :status="
                       !resolveItem.answer.includes(option.option)
                         ? 'exception'
-                        : ''
+                        : 'normal'
                     "
                     :percent="option.optionRate"
                     :format="() => option.option"
@@ -299,6 +299,9 @@ getResolvesById(route.query.id as unknown as number).then((res) => {
             color: @assistTextColor;
           }
           :deep(.ant-progress) {
+            .ant-progress-text {
+              color: @jxColor;
+            }
             svg {
               width: 30px;
             }
