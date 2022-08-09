@@ -70,7 +70,7 @@
             <div v-if="!item.isSubmit" class="confirm">
               <span
                 :style="{
-                  backgroundColor: item.answer ? '#4379ff' : '#ddd',
+                  backgroundColor: item.answer.length ? '#4379ff' : '#ddd',
                 }"
                 @click="submitSubject(item)"
                 >确认作答</span
