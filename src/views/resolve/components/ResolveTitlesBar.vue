@@ -11,40 +11,47 @@
         >/{{ resolveData?.totalOtopic }}
       </div>
     </div>
-    <template
-      v-for="(typeItems, typeIdx) in typeResolveData"
-      :key="typeItems.name"
-    >
-      <div
-        v-if="typeItems.resolveItems.length"
-        class="type-scores"
-        @click="scrollToTitle"
+    <section>
+      <template
+        v-for="(typeItems, typeIdx) in typeResolveData"
+        :key="typeItems.name"
       >
-        <p>{{ typeItems.name }}</p>
-        <div class="idx-list">
-          <span
-            v-for="(idxItem, idx) in typeItems.resolveItems"
-            :key="idxItem.id"
-            :class="
-              idxItem.selectAnswer
-                ? idxItem.answer === idxItem.selectAnswer
-                  ? 'correct'
-                  : 'wrong'
-                : 'unanswered'
-            "
-            :style="{ borderRadius: typeIdx > 0 ? '5px' : '20px' }"
-            :data-idx="idx + typeItems.start"
-          >
-            {{ idx + 1 + typeItems.start }}
-            <img
-              v-if="idxItem.isMark"
-              src="@/assets/icons/mark.png"
-              class="mark"
-            />
-          </span>
+        <div
+          v-if="typeItems.resolveItems.length"
+          class="type-scores"
+          @click="scrollToTitle"
+        >
+          <p>{{ typeItems.name }}</p>
+          <div class="idx-list">
+            <span
+              v-for="(idxItem, idx) in typeItems.resolveItems"
+              :key="idxItem.id"
+              :class="
+                idxItem.selectAnswer
+                  ? idxItem.answer === idxItem.selectAnswer
+                    ? 'correct'
+                    : 'wrong'
+                  : 'unanswered'
+              "
+              :style="{ borderRadius: typeIdx > 0 ? '5px' : '20px' }"
+              :data-idx="idx + typeItems.start"
+            >
+              {{ idx + 1 + typeItems.start }}
+              <img
+                v-if="idxItem.isMark"
+                src="@/assets/icons/mark.png"
+                class="mark"
+              />
+            </span>
+          </div>
         </div>
-      </div>
-    </template>
+      </template>
+    </section>
+    <div class="type-mark">
+      <span><i style="background-color: #eeeef4"></i> 未作答 </span>
+      <span><i style="background-color: #4379ff"></i> 答对 </span>
+      <span><i style="background-color: #f5312b"></i> 答错 </span>
+    </div>
   </aside>
 </template>
 
@@ -70,13 +77,14 @@ const scrollToTitle = (e: Event) => {
 <style scoped lang="less">
 aside {
   position: sticky;
-  top: 0;
+  display: flex;
+  flex-direction: column;
+  top: 20px;
   padding: 20px;
   margin-left: 20px;
   border-radius: 10px;
   width: 380px;
   max-height: 500px;
-  overflow-y: auto;
   background-color: #fff;
   p {
     margin: 0;
@@ -97,43 +105,66 @@ aside {
       }
     }
   }
-  .type-scores {
-    p {
-      margin: 10px 0;
-    }
-    .idx-list {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      .correct {
-        background-color: #4379ff;
+  section {
+    flex: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
+    .type-scores {
+      p {
+        margin: 10px 0;
       }
-      .wrong {
-        background-color: #f5312b;
-      }
-      .unanswered {
-        background-color: #eeeef4;
-      }
-      span {
-        position: relative;
-        display: inline-block;
-        line-height: 39px;
-        text-align: center;
-        color: #fff;
-        width: 39px;
-        height: 39px;
-        margin-right: 25px;
-        margin-bottom: 20px;
-        cursor: pointer;
-        .mark {
-          position: absolute;
-          top: -2px;
-          right: -12px;
+      .idx-list {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        .correct {
+          background-color: #4379ff;
+        }
+        .wrong {
+          background-color: #f5312b;
+        }
+        .unanswered {
+          background-color: #eeeef4;
+        }
+        span {
+          position: relative;
+          display: inline-block;
+          line-height: 39px;
+          text-align: center;
+          color: #fff;
+          width: 38px;
+          height: 38px;
+          margin-right: 25px;
+          margin-bottom: 20px;
+          cursor: pointer;
+          .mark {
+            position: absolute;
+            top: -2px;
+            right: -12px;
+          }
+        }
+        & span:nth-child(5n) {
+          margin-right: 0;
         }
       }
-      & span:nth-child(5n) {
-        margin-right: 0;
-      }
+    }
+  }
+  .type-mark {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 40px;
+    span {
+      line-height: 16px;
+      height: 16px;
+    }
+    i {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      margin-right: 3px;
+      vertical-align: top;
+      border-radius: 8px;
     }
   }
 }

@@ -84,7 +84,7 @@
                     :status="
                       !resolveItem.answer.includes(option.option)
                         ? 'exception'
-                        : 'success'
+                        : ''
                     "
                     :percent="option.optionRate"
                     :format="() => option.option"
