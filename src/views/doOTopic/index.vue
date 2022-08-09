@@ -24,10 +24,22 @@
           </a-switch>
         </span>
         <div class="time">
+          <span class="font-control">
+            字体大小：
+            <plus-square-outlined
+              :class="{ disabled: isMax }"
+              @click="incrementFontSize"
+            />
+            <minus-square-outlined
+              :class="{ disabled: isMin }"
+              @click="decrementFontSize"
+            />
+          </span>
           <span
             style="color: #fff; cursor: pointer; margin-right: 20px"
             @click="toggleFullScreen()"
           >
+            全屏：
             <component
               :is="isFullScreen ? FullscreenExitOutlined : FullscreenOutlined"
             />
@@ -158,6 +170,8 @@ import {
   FullscreenExitOutlined,
   MehFilled,
   SmileFilled,
+  PlusSquareOutlined,
+  MinusSquareOutlined,
 } from "@ant-design/icons-vue";
 import { useRoute } from "vue-router";
 import { useUserStore } from "@/store/user";
@@ -165,6 +179,7 @@ import storage from "@/utils/storage";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 import useFullScreen from "@/hooks/useFullScreen";
 import useDark from "@/hooks/useDark";
+import useFontSize from "@/hooks/useFontSize";
 import router from "@/router";
 import { getSubjectsAtRandom } from "@/api/home";
 import { submitChapter, getSubjectsByChapterId } from "@/api/subject";
@@ -181,6 +196,11 @@ const isSubmit = ref(false);
 const isRandom = ref("");
 const { isDark } = useDark();
 const { isFullScreen, toggleFullScreen } = useFullScreen();
+const { isMax, isMin, incrementFontSize, decrementFontSize } = useFontSize(
+  "--aft-do-main-fs",
+  18,
+  12
+);
 // 保存当前正在做的题目、以及index，用于保存答案和标记
 const currentSubject = ref<{
   idx: number;
@@ -243,13 +263,8 @@ const currentTimes = computed(() => {
 let stayTime = 0;
 // 计时控制
 let timer: NodeJS.Timer | null = null;
-// 按钮跳转、点击跳转
-// const changeSubject = (idx: number) => {
-//   if (idx >= 0 && idx < chapter.value!.otopicFrontVos.length) {
-//     currentSubject.value!.body = chapter.value!.otopicFrontVos[idx];
-//     currentSubject.value!.idx = idx;
-//   }
-// };
+
+// 使用事件委托，而非多个绑定
 const changeSubject = (e: Event) => {
   const idx = (e.target as HTMLDivElement).dataset.idx;
   if (idx && +idx >= 0 && +idx < chapter.value!.otopicFrontVos.length) {
@@ -261,20 +276,23 @@ const sendChapter = () => {
   handleClosePage();
   storage.deleteSession(storage_key);
   isSubmit.value = true;
-  const userOtopicRecords: ISubmitSubject[] = [];
   const subjects = chapter.value?.otopicFrontVos;
   const handTime = Math.round(currentSeconds.value / 60);
-  answers.value.forEach((answer: any, idx) => {
-    userOtopicRecords.push({
-      uid: userStore.id,
-      oid: subjects![idx].id,
-      chapterId: chapter.value!.otopicFrontVos[idx].chapterId,
-      isMark: marks.value![idx] ? 1 : 0,
-      selectAnswer:
-        typeof answer === "string" ? answer : answer.sort().join(","),
-      otopicScore: subjects![idx].score,
-    });
-  });
+
+  const userOtopicRecords: ISubmitSubject[] = answers.value.map(
+    (answer: any, idx) => {
+      return {
+        uid: userStore.id,
+        oid: subjects![idx].id,
+        chapterId: chapter.value!.otopicFrontVos[idx].chapterId,
+        isMark: marks.value![idx] ? 1 : 0,
+        selectAnswer:
+          typeof answer === "string" ? answer : answer.sort().join(","),
+        otopicScore: subjects![idx].score,
+      };
+    }
+  );
+
   submitChapter({
     uid: userStore.id,
     nickname: userStore.nickname,
@@ -467,6 +485,18 @@ window.onbeforeunload = () => {
       color: var(--aft-do-info-color);
       .time {
         color: var(--aft-do-time-color);
+        .font-control {
+          color: #fff;
+          margin-right: 10px;
+          span {
+            cursor: pointer;
+            margin-right: 10px;
+          }
+          .disabled {
+            cursor: not-allowed;
+            color: @assistTextColor;
+          }
+        }
         .hand-in-button {
           display: inline-block;
           width: 53px;
@@ -540,10 +570,10 @@ window.onbeforeunload = () => {
       .title-wrapper {
         height: calc(100% - 80px);
         color: var(--aft-do-main-title-color);
+        font-size: var(--aft-do-main-fs);
         & > p {
           margin: 0;
           border-bottom: 1px solid var(--aft-do-main-titlewp-bdcolor);
-          font-size: 13px;
         }
         & > p:first-child {
           span {
