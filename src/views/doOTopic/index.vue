@@ -294,8 +294,8 @@ const sendChapter = async (submitType: 0 | 1 = 0) => {
   );
 };
 const handSendChapter = async () => {
-  const res = await sendChapter(1);
   handleClosePage();
+  const res = await sendChapter(1);
   router.replace(
     `/resolve?id=${res.data.data}&courseName=${route.query.course}&chapterName=${route.query.chapterName}`
   );
