@@ -21,8 +21,10 @@ export interface IChapterSubjectDetails {
 }
 
 export interface ISubmitSubject {
-  id: number;
-  oid: number;
+  uid?: number;
+  chapterId?: number;
+  id?: number;
+  oid?: number;
   selectAnswer: string;
   otopicScore: number;
   isMark?: 1 | 0;
