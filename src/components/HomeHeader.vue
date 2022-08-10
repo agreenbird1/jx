@@ -29,9 +29,6 @@
                 <a-menu-item @click="logout">
                   <a href="javascript:;">退出登录</a>
                 </a-menu-item>
-                <a-menu-item>
-                  <router-link to="/studyCalendar">学习日历</router-link>
-                </a-menu-item>
               </a-menu>
             </template>
           </a-dropdown>
