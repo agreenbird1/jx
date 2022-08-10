@@ -175,7 +175,6 @@ import {
 } from "@ant-design/icons-vue";
 import { useRoute } from "vue-router";
 import { useUserStore } from "@/store/user";
-import storage from "@/utils/storage";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 import useFullScreen from "@/hooks/useFullScreen";
 import useDark from "@/hooks/useDark";
@@ -191,7 +190,6 @@ import type {
 
 const route = useRoute();
 const userStore = useUserStore();
-const storage_key = (userStore.id + "" + route.query.chapterId) as string;
 const isSubmit = ref(false);
 const isRandom = ref("");
 const { isDark } = useDark();
@@ -209,7 +207,7 @@ const currentSubject = ref<{
 // 当前章节内容，所有题目
 const chapter = ref<IChapterSubject>();
 const answers = ref<string[] & string[][]>([]); // 答案信息
-const marks = ref<boolean[]>(); // 标记信息
+const marks = ref<boolean[]>([]); // 标记信息
 // 记录每一种类型的题目数量以及下标，控制侧边栏的渲染
 const subjectTypeNumber = ref([
   {
@@ -247,9 +245,7 @@ const subjectType = computed(() => {
 // 总分
 const totalScore = ref(0);
 const totalSeconds = ref(0); // 总时间：s
-const currentSeconds = ref(
-  storage.getStorage<number>("time" + route.query.chapterId) || 0
-); // 当前时间：s
+const currentSeconds = ref(0); // 当前时间：s
 const currentTimes = computed(() => {
   const h = Math.floor(currentSeconds.value / 3600);
   const m = Math.floor(currentSeconds.value / 60) % 60;
@@ -260,7 +256,6 @@ const currentTimes = computed(() => {
     seconds: s < 10 ? "0" + s : s,
   };
 });
-let stayTime = 0;
 // 计时控制
 let timer: NodeJS.Timer | null = null;
 
@@ -272,18 +267,13 @@ const changeSubject = (e: Event) => {
     currentSubject.value!.idx = +idx;
   }
 };
-const sendChapter = () => {
-  handleClosePage();
-  storage.deleteSession(storage_key);
-  isSubmit.value = true;
+const sendChapter = async (submitType: 0 | 1 = 0) => {
   const subjects = chapter.value?.otopicFrontVos;
-  const handTime = Math.round(currentSeconds.value / 60);
-
   const userOtopicRecords: ISubmitSubject[] = answers.value.map(
     (answer: any, idx) => {
       return {
-        uid: userStore.id,
-        oid: subjects![idx].id,
+        id: subjects![idx].id,
+        oid: subjects![idx].oid,
         chapterId: chapter.value!.otopicFrontVos[idx].chapterId,
         isMark: marks.value![idx] ? 1 : 0,
         selectAnswer:
@@ -293,20 +283,24 @@ const sendChapter = () => {
     }
   );
 
-  submitChapter({
-    uid: userStore.id,
-    nickname: userStore.nickname,
-    totalScore: totalScore.value,
-    totalOtopic: marks.value!.length,
-    handTime,
-    userOtopicRecords,
-  }).then((res) => {
-    router.replace(
-      `/resolve?id=${res.data.data}&courseName=${route.query.course}&chapterName=${route.query.chapterName}`
-    );
-  });
+  return submitChapter(
+    {
+      nickname: userStore.nickname,
+      totalScore: totalScore.value,
+      userOtopicRecords,
+      eid: chapter.value!.eid!,
+    },
+    submitType
+  );
 };
-const submitChapterBtn = () => {
+const handSendChapter = async () => {
+  const res = await sendChapter(1);
+  handleClosePage();
+  router.replace(
+    `/resolve?id=${res.data.data}&courseName=${route.query.course}&chapterName=${route.query.chapterName}`
+  );
+};
+const submitChapterBtn = async () => {
   const isFinished = answers.value.every((answer) => answer.length > 0);
   // 存在有题目未作答！
   if (!isFinished) {
@@ -316,31 +310,34 @@ const submitChapterBtn = () => {
       content: "您当前还有题目未作答！确定要交卷吗？",
       okText: "确认",
       cancelText: "取消",
-      onOk() {
+      async onOk() {
         //交卷
-        sendChapter();
+        handSendChapter();
       },
     });
-  } else sendChapter();
+  } else handSendChapter();
 };
 const startTimer = () => {
   notification.info({
     duration: null,
     description: () =>
-      `当前章节答题总时长为${
-        totalSeconds.value / 60
-      }分钟，到时将自动交卷！请注意把握时间！`,
+      `当前章节答题剩余时长为${Math.ceil(
+        (totalSeconds.value - currentSeconds.value) / 60
+      )}分钟，到时将自动交卷！请注意把握时间！`,
     message: "注意！",
     style: {
       backgroundColor: "#ddebf6",
     },
     key: "notification",
   });
-  timer = setInterval(() => {
+  timer = setInterval(async () => {
+    // 到时自动交卷
     if (!(++currentSeconds.value < totalSeconds.value)) {
       clearInterval(timer as NodeJS.Timer);
       // 交卷逻辑
-      isSubmit.value = true;
+      handSendChapter();
+    }
+    if (currentSeconds.value % 120 === 0 && !isRandom.value) {
       sendChapter();
     }
     if (totalSeconds.value - currentSeconds.value === 10) {
@@ -355,30 +352,35 @@ const startTimer = () => {
         key: "handlePage",
       });
     }
-    stayTime++;
   }, 1000);
 };
 const initSubjects = (data: IChapterSubject[]) => {
   const tempChapter = data[0];
   // 按照单选 => 多选 => 不定项排序
   tempChapter.otopicFrontVos.sort((a, b) => a.type - b.type);
-  tempChapter.otopicFrontVos.forEach(
-    (subject) => subjectTypeNumber.value[subject.type - 1].count++
-  );
+  tempChapter.otopicFrontVos.forEach((subject, idx) => {
+    subjectTypeNumber.value[subject.type - 1].count++;
+    // 初始化标记信息
+    if (isRandom.value) {
+      marks.value[idx] = false;
+      answers.value[idx] = (subject.type === 1 ? "" : []) as string & string[];
+    } else {
+      marks.value[idx] = subject.isMark === 1;
+      // 初始化答案数据，单选为string 多选为 string[]
+      answers.value[idx] = (
+        subject.type === 1
+          ? subject.selectAnswer
+          : subject.selectAnswer.length
+          ? subject.selectAnswer.split(",")
+          : []
+      ) as string & string[];
+    }
+  });
   // 获取不同数据的类型题目数
   subjectTypeNumber.value[1].start = subjectTypeNumber.value[0].count;
   subjectTypeNumber.value[2].start =
     subjectTypeNumber.value[1].count + subjectTypeNumber.value[0].count;
   chapter.value = tempChapter;
-  // 初始化 marks 全部为 false
-  marks.value = new Array(tempChapter.otopicFrontVos.length).fill(false);
-  // 初始化答案数据，单选为string 多选为 string[]
-  answers.value = [
-    ...new Array(subjectTypeNumber.value[0].count).fill(""),
-    ...new Array(
-      subjectTypeNumber.value[1].count + subjectTypeNumber.value[2].count
-    ).fill([]),
-  ];
   currentSubject.value = {
     idx: 0,
     body: chapter.value.otopicFrontVos[0],
@@ -392,30 +394,10 @@ const initSubjects = (data: IChapterSubject[]) => {
       3 *
         (subjectTypeNumber.value[1].count + subjectTypeNumber.value[2].count)) *
     60; // 单位：s
-  const previous = storage.getSession<{
-    time: number;
-    marks: boolean[];
-    answers: string[] & string[][];
-  }>(storage_key);
-  if (previous)
-    Modal.confirm({
-      title: "注意！",
-      icon: createVNode(ExclamationCircleOutlined),
-      content: "查询到当前章节您有未完成的记录，是否继续做题？",
-      okText: "确认",
-      cancelText: "取消",
-      onOk() {
-        answers.value = previous.answers;
-        marks.value ??= previous.marks;
-        currentSeconds.value = previous.time;
-        startTimer();
-      },
-      onCancel() {
-        storage.deleteSession(storage_key);
-        startTimer();
-      },
-    });
-  else startTimer();
+  currentSeconds.value = isRandom.value
+    ? 0
+    : Math.floor((new Date().getTime() - tempChapter.firstTime) / 1000);
+  startTimer();
 };
 if (!route.query.isRandom) {
   getSubjectsByChapterId(route.query.chapterId as string).then((res) => {
@@ -424,19 +406,14 @@ if (!route.query.isRandom) {
 } else {
   isRandom.value = route.query.isRandom as string;
   getSubjectsAtRandom(route.query.chapterId as string).then((res) => {
+    console.log(res.data.data);
     initSubjects(res.data.data);
   });
 }
 
 // 刷新！离开当前页所作处理
 const handleClosePage = () => {
-  if (!isSubmit.value && !isRandom.value) {
-    storage.setSession(storage_key, {
-      time: currentSeconds.value,
-      marks: marks.value,
-      answers: answers.value,
-    });
-  }
+  isSubmit.value = true;
   // 可能存在未点击确定退出的情况
   Modal.destroyAll();
   // 退出做题界面时退出全屏
@@ -448,13 +425,7 @@ const handleClosePage = () => {
 };
 onBeforeUnmount(() => {
   handleClosePage();
-  console.log(stayTime);
 });
-// 页面刷新需要刷新
-window.onbeforeunload = () => {
-  console.log(stayTime);
-  handleClosePage();
-};
 </script>
 
 <style scoped lang="less">
@@ -476,6 +447,7 @@ window.onbeforeunload = () => {
       color: var(--aft-do-info-color);
       img {
         width: 48px;
+        border-radius: 24px;
         margin-right: 10px;
       }
     }
