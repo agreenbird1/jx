@@ -25,5 +25,6 @@ module.exports = {
     "no-undef": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/ban-types": "off",
+    "vue/no-v-html": "off",
   },
 };
