@@ -164,7 +164,7 @@
 
 <script setup lang="ts">
 import { computed, createVNode, onBeforeUnmount, ref } from "vue";
-import { notification, Modal } from "ant-design-vue";
+import { notification, Modal, message } from "ant-design-vue";
 import {
   FullscreenOutlined,
   FullscreenExitOutlined,
@@ -263,8 +263,16 @@ let timer: NodeJS.Timer | null = null;
 const changeSubject = (e: Event) => {
   const idx = (e.target as HTMLDivElement).dataset.idx;
   if (idx && +idx >= 0 && +idx < chapter.value!.otopicFrontVos.length) {
-    currentSubject.value!.body = chapter.value!.otopicFrontVos[+idx];
-    currentSubject.value!.idx = +idx;
+    // 多选题要么不选，选则至少两个
+    if (
+      currentSubject.value?.body.type === 2 &&
+      answers.value[currentSubject.value.idx].length === 1
+    ) {
+      message.warning("多选题至少选择两个答案！");
+    } else {
+      currentSubject.value!.body = chapter.value!.otopicFrontVos[+idx];
+      currentSubject.value!.idx = +idx;
+    }
   }
 };
 const sendChapter = async (submitType: 0 | 1 = 0) => {
