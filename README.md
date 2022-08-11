@@ -16,4 +16,4 @@ pnpm install
 pnpm run dev
 ```
 
-在线体验：http://hwdevafanti.zhanliujiang.com/
+在线体验：http://afanti.zhanliujiang.com/
