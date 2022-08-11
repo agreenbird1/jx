@@ -286,7 +286,7 @@ const logout = () => {
   // 传递空键值对
   // 如果使用 {} 是合并
   userStore.$patch({
-    id: 0,
+    id: -1,
     nickname: "",
     avatar: "",
   });

@@ -7,7 +7,7 @@ export const useUserStore = defineStore({
   state: () => {
     return (
       storage.getStorage<IUser>("user") || {
-        id: 0,
+        id: -1,
         nickname: "",
         avatar: "",
         phone: "",
