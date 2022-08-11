@@ -93,9 +93,12 @@
                 </span>
               </template>
               <p class="mt-10">文字解析</p>
-              <div class="resolve-detail">
-                {{ resolveItem.resolve }}
-              </div>
+              <!-- 
+                请只对可信内容使用 HTML 插值，绝不要将用户提供的内容作为插值
+                但不能解决表格
+                管理后台配置，安全
+              -->
+              <div class="resolve-detail" v-html="resolveItem.resolve"></div>
             </div>
           </div>
         </template>
