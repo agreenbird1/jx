@@ -291,6 +291,7 @@ const logout = () => {
     avatar: "",
   });
   storage.deleteStorage("user");
+  router.push("/");
   message.success("退出成功！");
 };
 const searchSubjects = () => {
