@@ -52,7 +52,7 @@ const router = createRouter({
   },
 });
 router.beforeEach((to, from) => {
-  if (to.path !== "/" && !userStore.id) {
+  if (to.path !== "/" && !userStore.nickname) {
     message.warning("请登录后再试！");
     return false;
   }
