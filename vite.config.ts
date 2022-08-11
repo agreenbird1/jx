@@ -111,10 +111,10 @@ export default defineConfig(({ mode, command }) => {
     build: {
       assetsDir: "static/img",
       // 取消计算文件大小，加快打包速度
-      reportCompressedSize: false,
+      reportCompressedSize: mode !== "development",
       // chunk拆分文件最大限制
       chunkSizeWarningLimit: 200,
-      sourcemap: false,
+      sourcemap: mode === "development",
       rollupOptions: {
         output: {
           chunkFileNames: "static/js/[name]-[hash].js",
