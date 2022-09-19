@@ -15,5 +15,3 @@ pnpm install
 # 切换到对应的分支
 pnpm run dev
 ```
-
-在线体验：http://afanti.zhanliujiang.com/
